@@ -8,6 +8,8 @@ import Menu from './pages/Menu';
 import ShoppingCart from './pages/ShoppingCart';
 import ListFlavors from './pages/ListFlavors';
 import ListProducts from './pages/ListProducts';
+import ListCompany from './pages/ListCompany';
+import Profile from './pages/Profile';
 
 function Routes() {
     return (
@@ -20,7 +22,9 @@ function Routes() {
                 <Route path="/shopping-cart" component={ShoppingCart} />
                 <Route path="/flavors-by-category/:idCategory" component={ListFlavors} />
                 <Route path="/products-by-filter" component={ListProducts} />
-                <Route path="*" component={<div></div>} />
+                <Route path="/company" component={ListCompany} />
+                <Route path="/profile" component={Profile} />
+                <Route path="*" component={<div>Olá mundo!</div>} />
             </Switch>
         </BrowserRouter>
     );

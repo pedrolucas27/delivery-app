@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useAlert } from "react-alert";
+import API from "../../server/api.js";
+import { getIdCompany } from "../../helpers.js";
 import { Fragment } from 'react'
 import { Disclosure } from '@headlessui/react'
 import { ShoppingCartIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
 import logo from "../../images/logo_mp.png";
+import { isLoggedIn } from "../../server/auth.js";
 import "../../index.css";
 
 const navigation = [
-  { name: 'Cardápio', href: '#', current: true },
-  { name: 'Contato', href: '#', current: false },
-  { name: 'Endereço', href: '#', current: false },
+  { name: 'Cardápio', href:"/menu", current: 'menu' },
+  { name: 'Estabelecimento', href:"/company", current: 'company' },
 ]
 
 function classNames(...classes) {
@@ -16,13 +19,53 @@ function classNames(...classes) {
 }
 
 const Navbar = (props) => {
+  const ID_COMPANY = getIdCompany();
+
+  const [logged, setLogged] = useState(false);
+  const [quantityItemCart, setQuantityItemCart] = useState(0);
+  const alert = useAlert();
+  useEffect(() => {
+    isLoggedIn().then((response) => {
+      setLogged(response);
+      if(response){
+        getCartProduct();
+      }
+    }).catch((error) => {
+      setLogged(false);
+    });
+  }, [])
+
   const clickCart = () => {
-    if(window.innerWidth > 1099){
-      window.location.href = "/shopping-cart"
+    if(logged){
+      if(window.innerWidth > 1090){
+        window.location.href = "/shopping-cart"
+      }else{
+        props.clickCartMobile();
+      }
     }else{
-      props.clickCartMobile();
+      alert.error("Faça o login antes.");
     }
   }
+
+  const logout = () => {
+    localStorage.clear();
+    window.location.href = "/";
+  }
+
+  const viewProfile = () => {
+    window.location.href = "/profile";
+  }
+
+  const getCartProduct = async () => {
+      try{
+        const idClient = localStorage.getItem('@masterpizza-delivery-app/id_client');
+        const response = await API.get("cart_product/"+idClient+"/"+ID_COMPANY);
+        setQuantityItemCart(response.data.length);
+      } catch(error){
+        console.log('Erro ao tentar acessar carrinho. Tente novamente!');
+      }
+  }
+
 	return(
 		<Disclosure as="nav" className="bg-red">
       {({ open }) => (
@@ -57,7 +100,7 @@ const Navbar = (props) => {
                         key={item.name}
                         href={item.href}
                         className={classNames(
-                          item.current ? 'bg-white text-red' : 'text-white hover:bg-white hover:text-red',
+                          item.current === props.current ? 'bg-white text-red' : 'text-white hover:bg-white hover:text-red',
                           'px-3 py-2 rounded-md text-sm font-medium'
                         )}
                         aria-current={item.current ? 'page' : undefined}
@@ -69,15 +112,39 @@ const Navbar = (props) => {
                 </div>
               </div>
               <div className="h-8 w-auto flex items-center px-5 hidden sm:block sm:ml-6">
-                <a href="/login" className="-m-2 mx-8 p-2 font-medium text-white">
-                  Entrar
-                </a>
-                <a
-                  href="/register"
-                  className='bg-yellow text-white px-3 py-2 rounded-md text-sm font-medium'
-                >
-                  Criar conta
-                </a>
+                {
+                  logged ? (
+                    <button onClick={() => logout()} className="mr-5 bg-transparent text-white rounded inline-flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                      <span>Sair</span>
+                    </button>
+                  ):(
+                    <a href="/login" className="-m-2 mx-8 p-2 font-medium text-white">
+                      Entrar
+                    </a>
+                  )
+                }
+                
+                {
+                  !logged ? (
+                    <a
+                      href="/register"
+                      className='bg-yellow text-white px-3 py-2 rounded-md text-sm font-medium'
+                    >
+                      Criar conta
+                    </a>
+                  ):(
+                    <button onClick={() => viewProfile()} className="bg-transparent text-white rounded inline-flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>Meu perfil</span>
+                    </button>
+                  )
+                }
+                
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 <button
@@ -90,7 +157,7 @@ const Navbar = (props) => {
                           className="flex-shrink-0 h-8 w-8 text-white group-hover:text-white"
                           aria-hidden="true"
                         />
-                        <span className="ml-2 text-sm font-medium text-white group-hover:text-white">0</span>
+                        <span className="ml-2 text-sm font-medium text-white group-hover:text-white">{quantityItemCart}</span>
                         <span className="sr-only">items in cart, view bag</span>
                       </a>
                 </button>
@@ -105,7 +172,7 @@ const Navbar = (props) => {
                   key={item.name}
                   href={item.href}
                   className={classNames(
-                    item.current ? 'bg-white text-red' : 'text-white hover:bg-white hover:text-red',
+                    item.current === props.current ? 'bg-white text-red' : 'text-white hover:bg-white hover:text-red',
                     'block px-3 py-2 rounded-md text-base font-medium'
                   )}
                   aria-current={item.current ? 'page' : undefined}
@@ -116,15 +183,38 @@ const Navbar = (props) => {
             </div>
             <div className="pt-4 pb-3 border-t border-white">
               <div className="flex items-center px-5">
-                <a href="/login" className="-m-2 mx-8 p-2 block font-medium text-white">
-                  Entrar
-                </a>
-                <a
-                  href="/register"
-                  className='bg-yellow text-white px-3 py-2 rounded-md text-sm font-medium'
-                >
-                  Criar conta
-                </a>
+                {
+                  logged ? (
+                    <button onClick={() => logout()} className="mr-5 bg-transparent text-white rounded inline-flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                      <span>Sair</span>
+                    </button>
+                  ):(
+                    <a href="/login" className="-m-2 mx-8 p-2 font-medium text-white">
+                      Entrar
+                    </a>
+                  )
+                }
+                
+                {
+                  !logged ? (
+                    <a
+                      href="/register"
+                      className='bg-yellow text-white px-3 py-2 rounded-md text-sm font-medium'
+                    >
+                      Criar conta
+                    </a>
+                  ):(
+                    <button onClick={() => viewProfile()} className="bg-transparent text-white rounded inline-flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <span>Meu perfil</span>
+                    </button>
+                  )
+                }
               </div>
             </div>
           </Disclosure.Panel>

@@ -4,7 +4,7 @@ import pie_default from "../../images/pie.png";
 import "../../index.css";
 const CardProduct = (props) => {
 	return(
-    	<div className="flex p-2 shadow cursor-pointer rounded-lg shadow-md">
+    	<div className="flex p-2 shadow cursor-pointer rounded-lg shadow-md" onClick={props.showModal}>
 		  	<div className="flex-none">
 		    	<img src={props.image || pie_default} alt="img-product" className="w-24 h-24 rounded-lg" />
 		  	</div>

@@ -1,22 +1,36 @@
 import React, { useState,  useEffect } from "react";
 import { useParams } from 'react-router-dom';
-import API from "../../server/api.js"
+import { useAlert } from 'react-alert';
+import API from "../../server/api.js";
+import { isLoggedIn } from "../../server/auth.js";
+import { getIdCompany } from "../../helpers.js";
 import Navbar from "../../components/Navbar";
 import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 import CardFlavor from "../../components/CardFlavor";
 import ShoppingCartMobile from "../../components/ShoppingCart";
 import Loading from "../../components/Loading";
+import MessageIsEmpty from "../../components/MessageIsEmpty";
 import "../../index.css";
 
 const ListFlavors = () => {
 	localStorage.removeItem("@masterpizza-delivery-app/key-flavor");
-	const ID_COMPANY = "4051e598-c3cf-4252-b38d-cb4df34fbbe2";
+	const ID_COMPANY = getIdCompany()
+	;
 	const { idCategory } = useParams();
 	const [dataFlavor, setDataFlavor] = useState([]);
 	const [openCart, setOpenCart] = useState(false);
 	const [loadingFlag, setLoadingFlag] = useState(false);
+	const [logged, setLogged] = useState(false);
+	const alert = useAlert();
 
 	useEffect(() => {
+		setLoadingFlag(true);
+		isLoggedIn().then((response) => {
+			setLogged(response);
+		}).catch((error) => {
+			setLogged(false);
+		});
 		API.get("flavor/byCategory/"+idCategory+"/"+ID_COMPANY).then((response) => {
 			let array = [];
 			response.data.forEach((flavor) => {
@@ -28,10 +42,10 @@ const ListFlavors = () => {
 				})
 			})
 			setDataFlavor(array);
-			setLoadingFlag(true);
-			setTimeout(function(){ setLoadingFlag(false); }, 5000);						
+			setLoadingFlag(false);
 		}).catch((error) => {
-			console.log("MENSAGEM DE ERROR.");
+			setLoadingFlag(false);
+			alert.error('Erro ao tentar listar sabores!');
 		});
 	}, []);
 
@@ -48,7 +62,7 @@ const ListFlavors = () => {
 	    if((categoryByFlavor === "PIZZA") || (categoryByFlavor === "PIZZAS")){
 	    	let is_check = !obj.check;
     		if(is_check && (dataFlavor.filter((i) => i.check === true).length === 2)){
-      			console.log("Mensagem: Só se pode escolher dois sabores");
+    			alert.error('Só se pode escolher no máximo dois sabores!');
     		}else{
       			let array = [];
 			    dataFlavor.forEach((p) => { 
@@ -78,12 +92,20 @@ const ListFlavors = () => {
 	    }
   	}
 
-  	const redirect = () => {
-  		let flavors = dataFlavor.filter((i) => i.check === true);
-  		let array = [];
-  		flavors.forEach((f) => { array.push(f.id) });
-  		localStorage.setItem("@masterpizza-delivery-app/key-flavor", array);
-  		window.location.href = "/products-by-filter";
+  	const redirect = (flag) => {
+  		if(flag){
+  			let flavors = dataFlavor.filter((i) => i.check === true);
+	  		let array = [];
+	  		if(flavors.length !== 0){
+	  			flavors.forEach((f) => { array.push(f.id) });
+		  		localStorage.setItem("@masterpizza-delivery-app/key-flavor", array);
+		  		window.location.href = "/products-by-filter";
+	  		}else{
+	  			alert.error('Escolha no minimo um sabor!');
+	  		}
+  		}else{
+  			window.location.href = "/menu";
+  		}
   	}
 
 	return(
@@ -91,42 +113,57 @@ const ListFlavors = () => {
 			{
 				!loadingFlag ? (
 					<div>
-						<Navbar />
+						<Navbar current={"menu"} clickCartMobile={() => setOpenCart(!openCart)} />
 						<Header title={'Cardápio'} listFlavors={true} />
 						<main>
 						    <div className="max-w-7xl mx-auto py-0 sm:px-6 lg:px-8">
 						      	<div className="px-4 py-4 sm:px-0 py-6">
 						        	<div className="rounded-lg h-96">
-							        	<h2 className="pb-4 text-lg w-full font-bold text-black sm:text-2xl">
-				                			Escolha até 2 sabores
-				              			</h2>
-				              			<div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-											{
-												dataFlavor.map((flavor) => {
-													return(
-														<CardFlavor
-															key={flavor.id}
-															name={flavor.name}
-															description={flavor.description}
-															check={flavor.check}
-															onChangeFlavor={() => checkFlavor(flavor.id)}
-														/>
-													)
-												})
-											}	
-										</div>
+						        		{
+						        			dataFlavor.length !== 0 ? (
+						        				<div>
+						        					<h2 className="pb-4 text-lg w-full font-bold text-black sm:text-2xl">
+				                						Escolha até 2 sabores
+				              						</h2>
+							              			<div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+														{
+															dataFlavor.map((flavor) => {
+																return(
+																	<CardFlavor
+																		key={flavor.id}
+																		name={flavor.name}
+																		description={flavor.description}
+																		check={flavor.check}
+																		onChangeFlavor={() => checkFlavor(flavor.id)}
+																	/>
+																)
+															})
+														}	
+													</div>
+						        				</div>
+						        			):(
+						        				<MessageIsEmpty 
+						        					title="Esta categoria não possui sabor ou sabor ativo!"
+						        				/>
+						        			)
+						        		}
 							            <div className="mt-4">
-							               	<button onClick={redirect} className='bg-green w-full text-white p-2 rounded-lg text-lg font-medium sm:p-3 w-14'>
-							              		Seguir
+							               	<button onClick={dataFlavor.length !== 0 ? () => redirect(true):() => redirect(false)} className='bg-green w-full text-white p-2 rounded-lg text-lg font-medium sm:p-3 w-14'>
+							              		{dataFlavor.length !== 0 ? "Seguir":"Voltar"}
 							                </button>   	
 							            </div>
 						        	</div>
 						      	</div>
 						    </div>
 						</main>
+						<Footer />
 						<ShoppingCartMobile 
 							open={openCart}
-							close={() => setOpenCart(false)} 
+							close={() => setOpenCart(false)}
+							onLoading={(flag) => setLoadingFlag(flag)}
+							idClient={logged ? localStorage.getItem('@masterpizza-delivery-app/id_client'):null}
+							idCompany={logged ? ID_COMPANY:null}
+							logged={logged}
 						/>
 					</div>
 				):(

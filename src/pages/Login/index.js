@@ -1,15 +1,19 @@
 import React, { useState } from "react";
+import { useAlert } from 'react-alert';
 import API from "../../server/api.js"
+import { getIdCompany } from "../../helpers.js";
 import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import Loading from "../../components/Loading";
 import "../../index.css";
 const Login = () => {
-	const ID_COMPANY = "4051e598-c3cf-4252-b38d-cb4df34fbbe2";
+	const ID_COMPANY = getIdCompany();
 	const [loadingFlag, setLoadingFlag] = useState(false);
 	const [formData, setFormData] = useState({
 		username: '',
 		password: '',
 	});
+	const alert = useAlert();
 
 	const onAuth = async (event) => {
 		setLoadingFlag(true);
@@ -24,22 +28,21 @@ const Login = () => {
         	if(response.status === 200){
         		localStorage.setItem('@masterpizza-delivery-app/token', response.data.token_client);
                 localStorage.setItem('@masterpizza-delivery-app/id_client', response.data.id_client);
-                console.log("MENSAGEM DE BOAS VINDAS.");
+                alert.success(response.data.message);
                 setTimeout(() => {
                 	window.location.href = "/menu"
                 }, 1000);
         	}else{
-        		console.log("MENSAGEM DE ERROR.");
+        		alert.error(response.data.message);
         	}
         }).catch((error) => {
         	setLoadingFlag(false);
-        	console.log("MENSAGEM DE ERROR.");
+        	alert.error("Erro ao tentar realizar login. Tente novamente!");
         });
         event.preventDefault();
 	}
 
 	const onChangeForm = (e) => {
-		console.log(e.target.name + ": " + e.target.value);
 		var data = {
 			username: formData.username,
 			password: formData.password,
@@ -58,7 +61,6 @@ const Login = () => {
 						    <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
 							    <div className="px-4 py-6 sm:px-0">
 							       	<div className="rounded-lg h-96">
-										<div className="bg-grey-lighter min-h-screen flex flex-col">
 								            <div className="container max-w-sm mx-auto flex-1 flex flex-col items-center justify-center px-2">
 								                <div className="bg-white px-6 py-4 shadow-lg rounded shadow-md text-black w-full h-full">
 								                    <h1 className="mb-8 text-3xl text-center">Login</h1>
@@ -92,11 +94,11 @@ const Login = () => {
 								                    </a>
 								                </div>
 								            </div>
-								        </div>
 						        	</div>
 						      	</div>
 						    </div>
 						</main>
+						<Footer />
 					</div>
 				):(
 					<Loading time={3000}/>
