@@ -1,24 +1,21 @@
 import API from "./api.js";
 import { getIdCompany } from "../helpers.js";
 
-export const isLoggedIn = async (ID_COMPANY) => {
+export const isLoggedIn = async () => {
 	try{
-		const ID_COMPANY = getIdCompany();
-		const idClient = localStorage.getItem('@masterpizza-delivery-app/id_client');
-		const tokenClient = localStorage.getItem('@masterpizza-delivery-app/token');
+		const TOKEN = localStorage.getItem('@masterpizza-delivery-app/token');
 		const response = await API.post("clientLogged", {  
-			id: idClient,
-			idCompany: ID_COMPANY
+			id: localStorage.getItem('@masterpizza-delivery-app/id_client'),
+			idCompany: getIdCompany()
 		},{
-			headers: { Authorization: 'Bearer '.concat(tokenClient) }
+			headers: { Authorization: 'Bearer '.concat(TOKEN) }
 		});
-
 		if(response.status === 200){
+			localStorage.setItem('@masterpizza-delivery-app/name-phone-user', `${response.data[0].name_client};${response.data[0].phone_client}`);
 			return true;
 		}else{
 			return false;
 		}
-
 	} catch(error){
 		return false;
 	}	

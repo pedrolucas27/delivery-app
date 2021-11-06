@@ -22,15 +22,15 @@ export function changeCommaForPoint(value){
 export function maskPhoneCell(value){
 	var v = value;
 	if(value){
-		v = v.replace(/\D/g,""); //Remove tudo o que não é dígito
-    	v = v.replace(/^(\d{2})(\d)/g,"($1) $2"); //Coloca parênteses em volta dos dois primeiros dígitos
-    	v = v.replace(/(\d)(\d{4})$/,"$1-$2"); //Coloca hífen entre o quarto e o quinto dígitos
+		v = v.replace(/\D/g,"");
+    	v = v.replace(/^(\d{2})(\d)/g,"($1) $2");
+    	v = v.replace(/(\d)(\d{4})$/,"$1-$2");
 	}
     return v;
 }
 
 export function getIdCompany(){
-	const ID_COMPANY = "e7814c8f-36bb-456e-9f46-18337dadeacf";
+	const ID_COMPANY = "b0ef909f-eb7d-4e1b-890b-96de0d00789e"; //ID-TESTE-COMPANY-NATAN
 	return ID_COMPANY;
 }
 

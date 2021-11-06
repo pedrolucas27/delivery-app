@@ -17,7 +17,7 @@ const ListCompany = () => {
 	useEffect(() => {
 		setLoadingFlag(true);
 		API.get("establishment/"+ID_COMPANY).then((response) => {
-			setCompany(response.data[0])
+			setCompany(response.data[0]);
 			setLoadingFlag(false);
 		}).catch((error) => {
 			setLoadingFlag(false);

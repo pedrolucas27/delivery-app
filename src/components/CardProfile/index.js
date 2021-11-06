@@ -1,7 +1,7 @@
 import React,{ useState, useEffect } from "react";
 import { maskPhoneCell, getIdCompany } from "../../helpers.js";
 import "../../index.css";
-const CardProfile = (props) => {
+const CardProfile = ({ user, ...props }) => {
 	const ID_COMPANY = getIdCompany();
 	const [formData, setFormData] = useState("");
 	const [phoneCell, setPhoneCell] = useState("");
@@ -9,10 +9,10 @@ const CardProfile = (props) => {
 
 	useEffect(() => {
 		setFormData({
-			name: props.user.name_client,
-			email: props.user.email_client
+			name: user.name_client,
+			email: user.email_client
 		});
-		setPhoneCell(maskPhoneCell(props.user.phone_client));
+		setPhoneCell(maskPhoneCell(user.phone_client));
 	}, []);
 
 	const onChangeForm = (e) => {
@@ -49,10 +49,10 @@ const CardProfile = (props) => {
 
 	const resetFilds = (e) => {
 		setFormData({
-			name: props.user.name_client,
-			email: props.user.email_client
+			name: user.name_client,
+			email:user.email_client
 		});
-		setPhoneCell(maskPhoneCell(props.user.phone_client));
+		setPhoneCell(maskPhoneCell(user.phone_client));
 		setEnabledFields(!enabledFields);
 		e.preventDefault();
 	}

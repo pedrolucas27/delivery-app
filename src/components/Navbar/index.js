@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useAlert } from "react-alert";
 import API from "../../server/api.js";
 import { getIdCompany } from "../../helpers.js";
-import { Fragment } from 'react'
 import { Disclosure } from '@headlessui/react'
 import { ShoppingCartIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
 import logo from "../../images/logo_mp.png";
@@ -60,7 +59,10 @@ const Navbar = (props) => {
       try{
         const idClient = localStorage.getItem('@masterpizza-delivery-app/id_client');
         const response = await API.get("cart_product/"+idClient+"/"+ID_COMPANY);
-        setQuantityItemCart(response.data.length);
+        if(response.data){
+          setQuantityItemCart(response.data.length);
+          localStorage.setItem('@masterpizza-delivery-app/id_cart', response.data[0].id_cart_fk);
+        }
       } catch(error){
         console.log('Erro ao tentar acessar carrinho. Tente novamente!');
       }

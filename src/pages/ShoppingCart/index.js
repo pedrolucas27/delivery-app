@@ -1,6 +1,6 @@
 import React, { useState,  useEffect } from "react";
 import { useAlert } from "react-alert";
-import { changeCommaForPoint, getIdCompany } from "../../helpers.js";
+import { changeCommaForPoint, getIdCompany, maskPhoneCell } from "../../helpers.js";
 import API from "../../server/api.js";
 import Navbar from "../../components/Navbar";
 import Loading from "../../components/Loading";
@@ -56,7 +56,7 @@ const ShoppingCart = () => {
 						size: product.size,
 						price: product.price_item_order,
 						quantity: product.quantity_item,
-						image: product.image ? `http://192.168.0.107:8080/${product.image}`:empty_default,
+						image: product.image ? `https://api-master-pizza.herokuapp.com/${product.image}`:empty_default,
 						is_product_mister: false
 					});
 				}
@@ -111,7 +111,12 @@ const ShoppingCart = () => {
 	const finishCart = async () => {
 		//ATUALIZAR COLUNA -> completed_purchase
 		try{
-			const response = await API.put("cart_status", { idClient: idClient, idCompany: ID_COMPANY });
+			const idCart = localStorage.getItem('@masterpizza-delivery-app/id_cart');
+			const response = await API.put("cart_status", { 
+				idClient: idClient, 
+				idCart: idCart, 
+				idCompany: ID_COMPANY 
+			});
 			return response.status === 200 ? true:false;
 		}catch(error){
 			alert.error('Erro ao tentar finalizar pedido. Tente novamente!');
@@ -128,10 +133,13 @@ const ShoppingCart = () => {
 				price_order += item.price;
 				arrayIdsProducts.push(item.id);
 			});
-			let address = `Rua: ${formAddress.street};N°: ${formAddress.number_address};Bairro: ${formAddress.district}`
-		    const responseFinishOrder = await API.post("createOrder", {
-			    price: price_order - valueDiscount, 
+			let data_client = localStorage.getItem('@masterpizza-delivery-app/name-phone-user');
+			let filds_address = `Rua: ${formAddress.street};N°: ${formAddress.number_address};Bairro: ${formAddress.district}`;
+			const address = `Nome: ${data_client.split(';')[0]};Telefone: ${maskPhoneCell(data_client.split(';')[1])};Endereço: ${filds_address}`
+			const responseFinishOrder = await API.post("createOrder", {
+			    amount_paid: formAddress.amount_paid ? Number(formAddress.amount_paid.replace(",", ".")):0,
 			    price_final: price_order - valueDiscount,
+				freight: 2,
 			    status_order: 0, 
 			    is_pdv: false, 
 			    observation: formAddress.observation || null, 
@@ -196,6 +204,7 @@ const ShoppingCart = () => {
 														        <h3 className="font-semibold text-center text-gray-600 text-xs uppercase w-1/5 text-center">Quantidade</h3>
 														        <h3 className="font-semibold text-center text-gray-600 text-xs uppercase w-1/5 text-center">Preço</h3>
 														        <h3 className="font-semibold text-center text-gray-600 text-xs uppercase w-1/5 text-center">Total</h3>
+																<h3 className="font-semibold text-center text-gray-600 text-xs uppercase w-1/5 text-center"> </h3>
 												        	</div>
 												        	{
 												        		dataProducts.map((product, index) => (
@@ -206,7 +215,6 @@ const ShoppingCart = () => {
 																            </div>
 																            <div className="flex flex-col justify-between ml-5">
 																              <p className="font-bold text-x1">{product.name}</p>
-																              <button onClick={() => deleteItemCart(product.id)} className="ml-5 font-semibold hover:text-red-500 text-gray-500 text-xs">Remove</button>
 																            </div>
 														          		</div>
 																        <div className="flex justify-center w-1/5">
@@ -216,7 +224,14 @@ const ShoppingCart = () => {
 																        </div>
 																        <span className="text-center w-1/5 font-semibold text-sm">R$ {changeCommaForPoint(product.price / product.quantity)}</span>
 																        <span className="text-center w-1/5 font-semibold text-sm">R$ {changeCommaForPoint(product.price)}</span>
-												        			</div> 
+																		<span className="text-center w-1/5 font-semibold text-sm">
+																			<div className="buttom-rem-item-cart" onClick={() => deleteItemCart(product.id)}>
+																				<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+																					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+																				</svg>
+																			</div>
+																		</span>
+																	</div> 
 												        		))
 												        	}
 													        <a href="/menu" className="flex font-semibold text-indigo-600 text-sm mt-10">
@@ -275,7 +290,7 @@ const ShoppingCart = () => {
 							                      	</p>
 							                      	<div className="flex justify-center mt-10">
 								                      	<div>
-								                      		<img src={empty_cart} className="rounded-full h-24 w-24" alt="cart-empty" className="h-16 w-16 mt-12" />
+								                      		<img src={empty_cart} className="rounded-full h-20 w-20 mt-12" alt="cart-empty" />
 								                   		</div>
 													</div>
 							                    </div>
@@ -285,9 +300,10 @@ const ShoppingCart = () => {
 			   					</div>	
 			   				</div>
 							<ModalAddressClient
-								show={showModalAddress}
+								showModalAddress={showModalAddress}
 								close={() => setShowModalAddress(false)}
 								onFinishOrder={(data) => finishOrder(data)}
+								isViewWeb
 							/>					
 						</main>
 						<Footer />

@@ -21,6 +21,7 @@ const ListProducts = () => {
 	const [loadingFlag, setLoadingFlag] = useState(false);
 	const [showModal, setShowModal] = useState(false);
 	const [products, setProducts] = useState([]);
+	const [additionals, setAdditionals] = useState([]);
 	const [productCart, setProductCart] = useState("");
 	const [logged, setLogged] = useState(false);
 	const alert = useAlert();
@@ -29,9 +30,9 @@ const ListProducts = () => {
 		let length_array = localStorage.getItem("@masterpizza-delivery-app/key-flavor")?.split(",").length;
 		setLoadingFlag(true);
 		verifyAuth();
-		if(length_array > 1){
+		if (length_array > 1) {
 			getProductsByMisto();
-		}else{
+		} else {
 			getProductsByCategoryAndFlavor();
 		}
 		setLoadingFlag(false);
@@ -46,7 +47,7 @@ const ListProducts = () => {
 		});
 	}
 
-	const getProductsByCategoryAndFlavor = async () => {
+	const getProductsByCategoryAndFlavor = () => {
 		const idFlavor = localStorage.getItem("@masterpizza-delivery-app/key-flavor");
 		API.get("product/others/" + idCategory + "/" + idFlavor + "/" + ID_COMPANY).then((response) => {
 			let array = [];
@@ -55,7 +56,7 @@ const ListProducts = () => {
 					id: product.id_product,
 					name: product.name_product,
 					description: product.description,
-					image: product.image ? `http://192.168.0.107:8080/${product.image}`:null,
+					image: product.image ? `https://api-master-pizza.herokuapp.com/${product.image}` : null,
 					price: product.price,
 					size: product.size_product + " (" + product.unit + " - " + product.abreviation + ")",
 					is_product_mister: false
@@ -67,7 +68,7 @@ const ListProducts = () => {
 		});
 	}
 
-	const getProductsByMisto = async () => {	
+	const getProductsByMisto = () => {
 		let array = [];
 		let flavors = localStorage.getItem("@masterpizza-delivery-app/key-flavor").split(",");
 		API.get("product/others/" + idCategory + "/" + ID_COMPANY).then((response) => {
@@ -79,7 +80,27 @@ const ListProducts = () => {
 			filterProductsMistoPerSize(array);
 		}).catch((error) => {
 			alert.error('Erro ao tentar listar produtos!');
-		});	
+		});
+	}
+
+	const getAdditionalsByCategory = () => {
+		try {
+			API.get("additional/" + idCategory + "/" + ID_COMPANY).then((response) => {
+				let array = [];
+				response.data.forEach((additional) => {
+					array.push({
+						id: additional.id,
+						name: additional.name,
+						price: additional.price
+					})
+				})
+				setAdditionals(array);
+			}).catch((error) => {
+				console.log("Erro de comunicação com o servidor! Tente novamente.");
+			});
+		} catch (error) {
+			console.log("Erro na listagem de adicionais pertencete ao produto.");
+		}
 	}
 
 	const filterProductsMistoPerSize = (products) => {
@@ -109,9 +130,10 @@ const ListProducts = () => {
 	}
 
 	const changeProduct = (idProduct, idProduct2) => {
+		getAdditionalsByCategory();
 		setLoadingFlag(true);
 		let product = {};
-		if(idProduct2){
+		if (idProduct2) {
 			product = products.filter((item) => item.id === idProduct && item.id_2 === idProduct2)[0];
 		} else {
 			product = products.filter((item) => item.id === idProduct)[0];
@@ -123,35 +145,62 @@ const ListProducts = () => {
 		}, 1000);
 	}
 
-	const addCartProduct = async (quantity, is_additional) => {
-		let product_cart = {};
-		if(is_additional){
-			product_cart = {
-				id_product_fk: null, 
-				id_product_fk2: null, 
-				quantity_item: quantity, 
-				price_item_order: quantity * productCart.price, 
-				observation: null, 
-				id_additional_fk: productCart.id
+	const addCartProduct = async (quantity, additional) => {
+		if (additional) {
+			let additional_cart = {
+				id_product_fk: null,
+				id_product_fk2: null,
+				quantity_item: quantity,
+				price_item_order: quantity * additional.price,
+				observation: null,
+				id_additional_fk: additional.id
 			}
-		}else{
-			product_cart = {
-				id_product_fk: productCart.id, 
-				id_product_fk2: productCart.is_product_mister ? productCart.id_2:null, 
-				quantity_item: quantity, 
-				price_item_order: quantity * productCart.price, 
-				observation: productCart.is_product_mister ? productCart.name:null, 
-				id_additional_fk: null
-			}
+			await insertAdditionalInCart(additional_cart);
+		}
+
+		let product_cart = {
+			id_product_fk: productCart.id,
+			id_product_fk2: productCart.is_product_mister ? productCart.id_2 : null,
+			quantity_item: quantity,
+			price_item_order: quantity * productCart.price,
+			observation: productCart.is_product_mister ? productCart.name : null,
+			id_additional_fk: null
 		}
 		await insertProductInCart(product_cart);
+	}
+
+	const insertAdditionalInCart = async (additional) => {
+		verifyAuth();
+		try {
+			if (logged) {
+				const idClient = localStorage.getItem('@masterpizza-delivery-app/id_client');
+				const responseAdditionalCart = await API.post("cart_product",
+					{
+						product: additional,
+						id_client_fk: idClient,
+						is_pdv: false,
+						id_company: ID_COMPANY
+					}
+				);
+				if (responseAdditionalCart.status !== 200) {
+					alert.error('Error ao tentar inserir adicional no carrinho! Tente novamente.');
+				}
+			} else {
+				alert.error('Faça o login antes de adicionar produto no carrinho!');
+				setTimeout(() => {
+					window.location.href = "/login";
+				}, 1000);
+			}
+		} catch (error) {
+			alert.error('Erro ao tentar inserir adicional no carrinho.');
+		}
 	}
 
 	const insertProductInCart = async (product) => {
 		verifyAuth();
 		setLoadingFlag(true);
-		try{
-			if(logged){
+		try {
+			if (logged) {
 				const idClient = localStorage.getItem('@masterpizza-delivery-app/id_client');
 				const responseProductCart = await API.post("cart_product",
 					{
@@ -162,91 +211,91 @@ const ListProducts = () => {
 					}
 				);
 				setLoadingFlag(false);
-				if(responseProductCart.status === 200){
+				if (responseProductCart.status === 200) {
 					alert.success('Adicionado no carrinho! Siga em frente.');
 					setShowModal(false);
 					window.location.href = "/menu";
-					//getAdditionalsByCategory(idCategoryOrder);
-				}else{
+				} else {
 					alert.error('Error ao tentar adicionar no carrinho! Tente novamente.');
 					setShowModal(false);
 				}
-			}else{
+			} else {
 				setLoadingFlag(false);
 				alert.error('Faça o login antes de adicionar produto no carrinho!');
 				setTimeout(() => {
 					window.location.href = "/login";
 				}, 1000);
 			}
-		} catch(error){
+		} catch (error) {
 			setLoadingFlag(false);
 			alert.error('Erro ao tentar inserir produto no carrinho.');
-		}	
+		}
 	}
 
-	return(
+	return (
 		<div>
 			{
 				!loadingFlag ? (
-						<div>
-							<Navbar current={"menu"} clickCartMobile={() => setOpenCart(!openCart)} />
-							<Header title={'Cardápio'} listProducts={true} />
-							<main>
-						    	<div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-						      		<div className="px-4 py-6 sm:px-0">
-						        		<div className="rounded-lg h-96">
-						        			{
-						        				products.length !== 0 ? (
-						        					<div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-														{
-															products.map((product) => {
-																return(
-																	<CardProduct
-																		key={product.id}
-																		name={product.name}
-																		image={product.image}
-																		price={product.price}
-																		description={product.description}
-																		showModal={
-																			product.is_product_misto ?
+					<div>
+						<Navbar current={"menu"} clickCartMobile={() => setOpenCart(!openCart)} />
+						<Header title={'Cardápio'} listProducts={true} />
+						<main>
+							<div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+								<div className="px-4 py-6 sm:px-0">
+									<div className="rounded-lg h-96">
+										{
+											products.length !== 0 ? (
+												<div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+													{
+														products.map((product) => {
+															return (
+																<CardProduct
+																	key={product.id}
+																	name={product.name}
+																	image={product.image}
+																	price={product.price}
+																	description={product.description}
+																	showModal={
+																		product.is_product_misto ?
 																			() => changeProduct(product.id, product.id_2)
 																			:
 																			() => changeProduct(product.id, null)
-																		}
-																	/>
-																)
-															})
-														}	
-													</div>
-						        				):(
-						        					<MessageIsEmpty 
-						        						title="Nenhum produto foi encontrado com a categoria e sabor (es) escolhidos!"
-						        					/>
-						        				)
-						        			}
-											
-						       			</div>
-						     		</div>
-						    	</div>
-							</main>
-							<Footer />
-							<ShoppingCartMobile 
-								open={openCart}
-								close={() => setOpenCart(false)}
-								onLoading={(flag) => setLoadingFlag(flag)}
-								idClient={logged ? localStorage.getItem('@masterpizza-delivery-app/id_client'):null}
-								idCompany={logged ? ID_COMPANY:null}
-								logged={logged}
-							/>
-							<ModalAddCart 
-								show={showModal}
-								product={productCart}
-								closeModal={() => setShowModal(false)}
-								addCartProduct={(quantity) => addCartProduct(quantity, false)}
-							/>
-						</div>
-				):(
-					<Loading time={5000}/>
+																	}
+																/>
+															)
+														})
+													}
+												</div>
+											) : (
+												<MessageIsEmpty
+													title="Nenhum produto foi encontrado com a categoria e sabor (es) escolhidos!"
+												/>
+											)
+										}
+
+									</div>
+								</div>
+							</div>
+						</main>
+						<Footer />
+						<ShoppingCartMobile
+							open={openCart}
+							close={() => setOpenCart(false)}
+							onLoading={(flag) => setLoadingFlag(flag)}
+							idClient={logged ? localStorage.getItem('@masterpizza-delivery-app/id_client') : null}
+							idCompany={logged ? ID_COMPANY : null}
+							logged={logged}
+						/>
+						<ModalAddCart
+							show={showModal}
+							product={productCart}
+							closeModal={() => setShowModal(false)}
+							addCartProduct={(quantity, additional) => addCartProduct(quantity, additional)}
+							additionals={additionals}
+						/>
+					</div>
+				) : (
+					<Loading time={5000} />
 				)
 			}
 		</div>

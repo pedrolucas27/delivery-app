@@ -1,4 +1,5 @@
 import React from "react";
+import emptyProduct from '../../images/empty_product.jpeg';
 import "../../index.css";
 const CardCategory = (props) => {
 	return(
@@ -12,7 +13,7 @@ const CardCategory = (props) => {
 		  	<div className="col-start-1 row-start-1 flex">
 		    	<div className="w-full grid grid-rows-2 gap-2">
 			      	<div className="relative col-span-3 row-span-2">
-			        	<img src={props.image} alt="" className="absolute inset-0 w-full h-full rounded-lg object-cover bg-gray-100" />
+			        	<img src={props.image || emptyProduct} alt="" className="absolute inset-0 w-full h-full rounded-lg object-cover bg-gray-100" />
 			      	</div>
 		    	</div>
 		  	</div>

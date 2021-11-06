@@ -11,6 +11,20 @@ main{
 	min-height: 120vh;
 }
 
+.container-main-page-not-found{
+	height: 100vh;
+	width: 100%;
+	background-color: #fff;
+	color: #000;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.buttom-rem-item-cart:hover{
+	cursor: pointer;
+}
+
 .container-loading-page{
 	height: 100vh;
 	width: 100%;
