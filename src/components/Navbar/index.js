@@ -9,8 +9,8 @@ import { isLoggedIn } from "../../server/auth.js";
 import "../../index.css";
 
 const navigation = [
-  { name: 'Cardápio', href:"/menu", current: 'menu' },
-  { name: 'Estabelecimento', href:"/company", current: 'company' },
+  { name: 'Cardápio', href: "/menu", current: 'menu' },
+  { name: 'Estabelecimento', href: "/company", current: 'company' },
 ]
 
 function classNames(...classes) {
@@ -23,25 +23,15 @@ const Navbar = (props) => {
   const [logged, setLogged] = useState(false);
   const [quantityItemCart, setQuantityItemCart] = useState(0);
   const alert = useAlert();
-  useEffect(() => {
-    isLoggedIn().then((response) => {
-      setLogged(response);
-      if(response){
-        getCartProduct();
-      }
-    }).catch((error) => {
-      setLogged(false);
-    });
-  }, [])
 
   const clickCart = () => {
-    if(logged){
-      if(window.innerWidth > 1090){
+    if (logged) {
+      if (window.innerWidth > 1090) {
         window.location.href = "/shopping-cart"
-      }else{
+      } else {
         props.clickCartMobile();
       }
-    }else{
+    } else {
       alert.error("Faça o login antes.");
     }
   }
@@ -56,20 +46,31 @@ const Navbar = (props) => {
   }
 
   const getCartProduct = async () => {
-      try{
-        const idClient = localStorage.getItem('@masterpizza-delivery-app/id_client');
-        const response = await API.get("cart_product/"+idClient+"/"+ID_COMPANY);
-        if(response.data){
-          setQuantityItemCart(response.data.length);
-          localStorage.setItem('@masterpizza-delivery-app/id_cart', response.data[0].id_cart_fk);
-        }
-      } catch(error){
-        console.log('Erro ao tentar acessar carrinho. Tente novamente!');
+    try {
+      const idClient = localStorage.getItem('@masterpizza-delivery-app/id_client');
+      const response = await API.get("cart_product/" + idClient + "/" + ID_COMPANY);
+      if (response.data) {
+        setQuantityItemCart(response.data.length);
+        localStorage.setItem('@masterpizza-delivery-app/id_cart', response.data[0].id_cart_fk);
       }
+    } catch (error) {
+      console.log('Erro ao tentar acessar carrinho. Tente novamente!');
+    }
   }
 
-	return(
-		<Disclosure as="nav" className="bg-red">
+  useEffect(() => {
+    isLoggedIn().then((response) => {
+      setLogged(response);
+      if (response) {
+        getCartProduct();
+      }
+    }).catch((error) => {
+      setLogged(false);
+    });
+  }, [])
+
+  return (
+    <Disclosure as="nav" className="bg-red">
       {({ open }) => (
         <>
           <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
@@ -122,13 +123,13 @@ const Navbar = (props) => {
                       </svg>
                       <span>Sair</span>
                     </button>
-                  ):(
+                  ) : (
                     <a href="/login" className="-m-2 mx-8 p-2 font-medium text-white">
                       Entrar
                     </a>
                   )
                 }
-                
+
                 {
                   !logged ? (
                     <a
@@ -137,7 +138,7 @@ const Navbar = (props) => {
                     >
                       Criar conta
                     </a>
-                  ):(
+                  ) : (
                     <button onClick={() => viewProfile()} className="bg-transparent text-white rounded inline-flex items-center">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -146,7 +147,7 @@ const Navbar = (props) => {
                     </button>
                   )
                 }
-                
+
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 <button
@@ -154,14 +155,14 @@ const Navbar = (props) => {
                   className="bg-red p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
                   onClick={clickCart}
                 >
-                      <a href="#!" className="group -m-2 p-2 flex items-center">
-                        <ShoppingCartIcon
-                          className="flex-shrink-0 h-8 w-8 text-white group-hover:text-white"
-                          aria-hidden="true"
-                        />
-                        <span className="ml-2 text-sm font-medium text-white group-hover:text-white">{quantityItemCart}</span>
-                        <span className="sr-only">items in cart, view bag</span>
-                      </a>
+                  <a href="#!" className="group -m-2 p-2 flex items-center">
+                    <ShoppingCartIcon
+                      className="flex-shrink-0 h-8 w-8 text-white group-hover:text-white"
+                      aria-hidden="true"
+                    />
+                    <span className="ml-2 text-sm font-medium text-white group-hover:text-white">{quantityItemCart}</span>
+                    <span className="sr-only">items in cart, view bag</span>
+                  </a>
                 </button>
               </div>
             </div>
@@ -193,13 +194,13 @@ const Navbar = (props) => {
                       </svg>
                       <span>Sair</span>
                     </button>
-                  ):(
+                  ) : (
                     <a href="/login" className="-m-2 mx-8 p-2 font-medium text-white">
                       Entrar
                     </a>
                   )
                 }
-                
+
                 {
                   !logged ? (
                     <a
@@ -208,7 +209,7 @@ const Navbar = (props) => {
                     >
                       Criar conta
                     </a>
-                  ):(
+                  ) : (
                     <button onClick={() => viewProfile()} className="bg-transparent text-white rounded inline-flex items-center">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -223,7 +224,7 @@ const Navbar = (props) => {
         </>
       )}
     </Disclosure>
-	)
+  )
 }
 export default Navbar;
 

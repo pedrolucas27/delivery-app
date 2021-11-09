@@ -1,9 +1,9 @@
-import React,{ useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { maskPhoneCell, getIdCompany } from "../../helpers.js";
 import "../../index.css";
 const CardProfile = ({ user, ...props }) => {
 	const ID_COMPANY = getIdCompany();
-	const [formData, setFormData] = useState("");
+	const [formData, setFormData] = useState(null);
 	const [phoneCell, setPhoneCell] = useState("");
 	const [enabledFields, setEnabledFields] = useState(false);
 
@@ -50,17 +50,17 @@ const CardProfile = ({ user, ...props }) => {
 	const resetFilds = (e) => {
 		setFormData({
 			name: user.name_client,
-			email:user.email_client
+			email: user.email_client
 		});
 		setPhoneCell(maskPhoneCell(user.phone_client));
 		setEnabledFields(!enabledFields);
 		e.preventDefault();
 	}
 
-	return(
+	return (
 		<div>
-      		<form>
-				<input 
+			<form>
+				<input
 					type="text"
 					className="block focus:border-2 focus:border-yellow w-full p-3 rounded mb-4"
 					name="name"
@@ -69,36 +69,36 @@ const CardProfile = ({ user, ...props }) => {
 					onChange={(e) => onChangeForm(e)}
 					disabled={!enabledFields}
 				/>
-				<input 
-				    type="text"
+				<input
+					type="text"
 					className="block focus:border-2 focus:border-yellow w-full p-3 rounded mb-4"
-				    name="phoneCell"
-	                placeholder="Telefone Celular"
+					name="phoneCell"
+					placeholder="Telefone Celular"
 					maxLength="15"
-			        value={phoneCell}
+					value={phoneCell}
 					onChange={(e) => setPhoneCell(maskPhoneCell(e.target.value))}
 					disabled={!enabledFields}
 				/>
-				<input 
+				<input
 					type="text"
-			        className="block focus:border-2 focus:border-yellow w-full p-3 rounded mb-4"
+					className="block focus:border-2 focus:border-yellow w-full p-3 rounded mb-4"
 					name="email"
-					placeholder="E-mail" 
+					placeholder="E-mail"
 					value={formData.email}
 					onChange={(e) => onChangeForm(e)}
 					disabled={!enabledFields}
 				/>
 				<button
 					className="w-full text-center py-2 rounded bg-yellow text-white sm:py-3"
-					onClick={!enabledFields ? (e) => enabledFieldsOn(e):(e) => submitData(e)}
+					onClick={!enabledFields ? (e) => enabledFieldsOn(e) : (e) => submitData(e)}
 				>
-					{!enabledFields ? "Deseja atualizar dados ? Sim.":"Atualizar"}
+					{!enabledFields ? "Deseja atualizar dados ? Sim." : "Atualizar"}
 				</button>
-				<button 
+				<button
 					className="mt-3 w-full text-center bg-transparent border border-yellow text-yellow py-2 rounded sm:py-3"
-					onClick={!enabledFields ? (e) => logout(e):(e) => resetFilds(e)}
+					onClick={!enabledFields ? (e) => logout(e) : (e) => resetFilds(e)}
 				>
-					{!enabledFields ? "Sair da conta":"Cancelar"}
+					{!enabledFields ? "Sair da conta" : "Cancelar"}
 				</button>
 			</form>
 		</div>
