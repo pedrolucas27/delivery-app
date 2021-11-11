@@ -65,7 +65,7 @@ const CardProfile = ({ user, ...props }) => {
 					className="block focus:border-2 focus:border-yellow w-full p-3 rounded mb-4"
 					name="name"
 					placeholder="Nome"
-					value={formData.name}
+					value={formData && formData.name}
 					onChange={(e) => onChangeForm(e)}
 					disabled={!enabledFields}
 				/>
@@ -84,7 +84,7 @@ const CardProfile = ({ user, ...props }) => {
 					className="block focus:border-2 focus:border-yellow w-full p-3 rounded mb-4"
 					name="email"
 					placeholder="E-mail"
-					value={formData.email}
+					value={formData && formData.email}
 					onChange={(e) => onChangeForm(e)}
 					disabled={!enabledFields}
 				/>
