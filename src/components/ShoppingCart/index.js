@@ -13,7 +13,7 @@ import Loading from "../Loading";
 import "../../index.css";
 
 import io from "socket.io-client";
-const socket = io("http://localhost:8080");
+const socket = io(API);
 
 const ShoppingCart = (props) => {
 	const ID_COMPANY = getIdCompany();
