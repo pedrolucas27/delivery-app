@@ -11,7 +11,12 @@ import pie_default from "../../images/pie.png";
 import empty_default from "../../images/empty_product.jpeg";
 import empty_cart from "../../images/empty-cart.png";
 import "../../index.css";
+
+import io from "socket.io-client";
+const socket = io(API);
+
 const ShoppingCart = () => {
+
 	const ID_COMPANY = getIdCompany();
 	const idClient = localStorage.getItem('@masterpizza-delivery-app/id_client');
 
@@ -163,6 +168,10 @@ const ShoppingCart = () => {
 					setLoadingFlag(false);
 					if (res) {
 						alert.success('Pedido enviado com sucesso! Acompanhe o andamento no seu perfil.');
+
+						const socket = io(API);
+						socket.emit("pedidorealizado", { msg: "Envio do pedido pelo delivery" });
+
 						setTimeout(() => {
 							window.location.href = "/profile";
 						}, 1000);

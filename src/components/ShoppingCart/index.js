@@ -12,6 +12,9 @@ import ModalAddressClient from "../ModalAddressClient";
 import Loading from "../Loading";
 import "../../index.css";
 
+import io from "socket.io-client";
+const socket = io("http://localhost:8080");
+
 const ShoppingCart = (props) => {
 	const ID_COMPANY = getIdCompany();
 	const idClient = localStorage.getItem('@masterpizza-delivery-app/id_client')
@@ -84,15 +87,15 @@ const ShoppingCart = (props) => {
 
 	const finishCart = async () => {
 		//ATUALIZAR COLUNA -> completed_purchase
-		try{
+		try {
 			const idCart = localStorage.getItem('@masterpizza-delivery-app/id_cart');
-			const response = await API.put("cart_status", { 
-				idClient: idClient, 
-				idCart: idCart, 
-				idCompany: ID_COMPANY 
+			const response = await API.put("cart_status", {
+				idClient: idClient,
+				idCart: idCart,
+				idCompany: ID_COMPANY
 			});
-			return response.status === 200 ? true:false;
-		}catch(error){
+			return response.status === 200 ? true : false;
+		} catch (error) {
 			alert.error('Erro ao tentar finalizar pedido. Tente novamente!');
 		}
 	}
@@ -135,6 +138,8 @@ const ShoppingCart = (props) => {
 					setLoadingFlag(false);
 					if (res) {
 						alert.success('Pedido enviado com sucesso! Acompanhe o andamento no seu perfil.');
+
+						socket.emit("pedidorealizado", { msg: "Envio do pedido pelo delivery" });
 						setTimeout(() => {
 							window.location.href = "/profile";
 						}, 1000);

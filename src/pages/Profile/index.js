@@ -14,6 +14,10 @@ import LineOrder from "../../components/LineOrder";
 import ModalDetailOrder from "../../components/ModalDetailOrder";
 import "../../index.css";
 
+import io from "socket.io-client";
+
+const sound = require("../../sound-order/sound.mp3");
+
 const Profile = () => {
 	const ID_COMPANY = getIdCompany();
 	const idClient = localStorage.getItem('@masterpizza-delivery-app/id_client');
@@ -32,6 +36,16 @@ const Profile = () => {
 	]
 	const alert = useAlert();
 
+	const [checkStatusOrder, setCheckStatusOrder] = useState(null);
+
+	const socket = io(API);
+	socket.on("pedidostatusserver", (data) => {
+		var audio = new Audio(sound);
+
+		console.log(audio)
+		setCheckStatusOrder(data);
+	});
+
 	useEffect(() => {
 		setLoadingFlag(true);
 		isLoggedIn().then((response) => {
@@ -46,7 +60,7 @@ const Profile = () => {
 		setTimeout(() => {
 			setLoadingFlag(false);
 		}, 2000);
-	}, []);
+	}, [checkStatusOrder]);
 
 	const loadingDataOrder = () => {
 		API.get("order-delivery-app/" + idClient + "/" + ID_COMPANY).then((response) => {
@@ -104,6 +118,7 @@ const Profile = () => {
 					<Loading time={5000} />
 				) : (
 					<div>
+						<audio preload="auto" src={sound}></audio>
 						<Navbar clickCartMobile={() => setOpenCart(!openCart)} />
 						<Header title={'Meu perfil'} />
 						<main>
