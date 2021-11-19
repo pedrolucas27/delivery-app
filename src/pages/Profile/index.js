@@ -40,10 +40,12 @@ const Profile = () => {
 
 	const socket = io(API_SOCKET);
 	socket.on("pedidostatusserver", (data) => {
-		var audio = new Audio(sound.default);
-		audio.play();
+		if (idClient === data.id_client) {
+			var audio = new Audio(sound.default);
+			audio.play();
 
-		setCheckStatusOrder(data);
+			setCheckStatusOrder(data);
+		}
 	});
 
 	useEffect(() => {

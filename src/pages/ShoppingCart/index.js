@@ -13,7 +13,6 @@ import empty_cart from "../../images/empty-cart.png";
 import "../../index.css";
 
 import io from "socket.io-client";
-const socket = io(API_SOCKET);
 
 const ShoppingCart = () => {
 
