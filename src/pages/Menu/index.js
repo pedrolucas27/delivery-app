@@ -20,6 +20,8 @@ const Menu = () => {
 	const [logged, setLogged] = useState(false);
 	const alert = useAlert();
 
+	console.log(API)
+
 	useEffect(() => {
 		setLoadingFlag(true);
 		isLoggedIn().then((response) => {

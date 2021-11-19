@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAlert } from "react-alert";
-import API from "../../server/api.js";
+import API, { API_SOCKET } from "../../server/api.js";
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
@@ -13,7 +13,7 @@ import Loading from "../Loading";
 import "../../index.css";
 
 import io from "socket.io-client";
-const socket = io(API);
+const socket = io(API_SOCKET);
 
 const ShoppingCart = (props) => {
 	const ID_COMPANY = getIdCompany();

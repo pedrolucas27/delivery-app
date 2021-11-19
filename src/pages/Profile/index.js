@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 //import socket from "socket.io";
 import { useAlert } from 'react-alert';
-import API from "../../server/api.js"
+import API, { API_SOCKET } from "../../server/api.js"
 import { getIdCompany } from "../../helpers.js";
 import { isLoggedIn } from "../../server/auth.js";
 import Navbar from "../../components/Navbar";
@@ -38,11 +38,11 @@ const Profile = () => {
 
 	const [checkStatusOrder, setCheckStatusOrder] = useState(null);
 
-	const socket = io(API);
+	const socket = io(API_SOCKET);
 	socket.on("pedidostatusserver", (data) => {
-		var audio = new Audio(sound);
+		var audio = new Audio(sound.default);
+		audio.play();
 
-		console.log(audio)
 		setCheckStatusOrder(data);
 	});
 

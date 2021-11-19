@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAlert } from "react-alert";
 import { changeCommaForPoint, getIdCompany, maskPhoneCell } from "../../helpers.js";
-import API from "../../server/api.js";
+import API, { API_SOCKET } from "../../server/api.js";
 import Navbar from "../../components/Navbar";
 import Loading from "../../components/Loading";
 import ModalAddressClient from "../../components/ModalAddressClient";
@@ -13,7 +13,7 @@ import empty_cart from "../../images/empty-cart.png";
 import "../../index.css";
 
 import io from "socket.io-client";
-const socket = io(API);
+const socket = io(API_SOCKET);
 
 const ShoppingCart = () => {
 
@@ -169,7 +169,7 @@ const ShoppingCart = () => {
 					if (res) {
 						alert.success('Pedido enviado com sucesso! Acompanhe o andamento no seu perfil.');
 
-						const socket = io(API);
+						const socket = io(API_SOCKET);
 						socket.emit("pedidorealizado", { msg: "Envio do pedido pelo delivery" });
 
 						setTimeout(() => {
