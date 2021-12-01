@@ -114,7 +114,7 @@ const ShoppingCart = (props) => {
 			const responseFinishOrder = await API.post("createOrder", {
 				amount_paid: formAddress.amount_paid ? Number(formAddress.amount_paid.replace(",", ".")) : 0,
 				price_final: price_order - formAddress.valueDiscount,
-				freight: 2,
+				freight: formAddress.freight,
 				status_order: 0,
 				is_pdv: false,
 				observation: formAddress.observation || null,

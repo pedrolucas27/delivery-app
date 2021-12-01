@@ -25,7 +25,7 @@ const ShoppingCart = () => {
 	const [nameCoupom, setNameCoupom] = useState(null);
 	const [showModalAddress, setShowModalAddress] = useState(false);
 	const [coupom, setCoupom] = useState(null);
-	const [valueDiscount, setValueDiscount] = useState(0);
+	const [discountPercentage, setDiscountPercentage] = useState(0);
 	const [quantityItemCart, setQuantityItemCart] = useState(0);
 	const alert = useAlert();
 
@@ -101,7 +101,7 @@ const ShoppingCart = () => {
 				if (response.status === 200) {
 					if (response.data) {
 						setCoupom(response.data[0]);
-						setValueDiscount(response.data[0].value_discount)
+						setDiscountPercentage(response.data[0].discount_percentage)
 					}
 				}
 			}).catch((error) => {
@@ -142,12 +142,13 @@ const ShoppingCart = () => {
 			const address = `Nome: ${data_client.split(';')[0]};Telefone: ${maskPhoneCell(data_client.split(';')[1])};Endereço: ${filds_address}`
 			const responseFinishOrder = await API.post("createOrder", {
 				amount_paid: formAddress.amount_paid ? Number(formAddress.amount_paid.replace(",", ".")) : 0,
-				price_final: price_order - valueDiscount,
-				freight: 2,
+				price_final: price_order - ((discountPercentage/100.0) * price_order),
+				freight: formAddress.freight,
 				status_order: 0,
 				is_pdv: false,
 				observation: formAddress.observation || null,
-				address_client: String(address),
+				address_client: address,
+				reference_point: formAddress.reference_point || null,
 				id_coupom_fk: formAddress.coupom ? formAddress.coupom.id_coupom : coupom ? coupom.id_coupom : null,
 				id_client_fk: idClient,
 				id_company: ID_COMPANY,
@@ -219,7 +220,7 @@ const ShoppingCart = () => {
 																	<div key={index} className="flex items-center hover:bg-gray-100 -mx-8 px-6 py-5">
 																		<div className="flex w-2/5">
 																			<div className="w-20">
-																				<img className="h-24 w-24" src={product.image} alt="imgProduct" />
+																				<img className="h-24 w-24" src={product.image || empty_default} alt="img-product" />
 																			</div>
 																			<div className="flex flex-col justify-between ml-5">
 																				<p className="font-bold text-x1">{product.name}</p>
@@ -263,10 +264,10 @@ const ShoppingCart = () => {
 																	onChange={(e) => setNameCoupom(e.target.value)}
 																/>
 																{
-																	valueDiscount !== 0 && (
+																	discountPercentage !== 0 && (
 																		<div className="mt-10">
 																			<p className="text-md text-black font-semibold">
-																				Você terá um desconto de R${changeCommaForPoint(valueDiscount)}
+																				Você terá um desconto de R${changeCommaForPoint(((discountPercentage/100.0) * priceTotal))}
 																			</p>
 																		</div>
 																	)
@@ -278,7 +279,7 @@ const ShoppingCart = () => {
 															<div className="border-t mt-5">
 																<div className="flex font-semibold justify-between py-6 text-sm">
 																	<span>Total da conta</span>
-																	<span>R$ {changeCommaForPoint(priceTotal - valueDiscount)}</span>
+																	<span>R$ {changeCommaForPoint(priceTotal - ((discountPercentage/100.0) * priceTotal))}</span>
 																</div>
 																<button
 																	className="bg-green w-full text-center py-2 rounded-md text-white"

@@ -33,7 +33,11 @@ const ListCompany = () => {
 				):(
 					<div>
 						<Navbar current={"company"} />
-						<Header title={'Estabelecimento'} timeWork={[company.start_time, company.end_time]}/>
+						<Header 
+							title={'Estabelecimento'} 
+							timeWork={[company.start_time, company.end_time]}
+							isOpenDay={company.is_active}
+						/>
 						<main>
 						    <div className="max-w-7xl mx-auto py-0 sm:px-6 lg:px-8">
 						      	<div className="px-4 py-4 sm:px-0 py-6">
@@ -63,28 +67,6 @@ const ListCompany = () => {
 							        			</p>
 							        			<p className="mt-3 text-center">
 							        				WhatsApp: {maskPhoneCell(company.user_whatsapp) || "-"}
-							        			</p>
-							        		</div>
-
-							        		<div className="mt-10">
-							        			<div className="flex justify-center">
-							        				<div>
-							        					<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-  															<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-														</svg>
-							        				</div>
-							        				<div>
-							        					<p className="text-lg font-semibold mb:2 ml-3 md:text-2xl">Endereço</p>
-							        				</div>
-							        			</div>
-							        			<p className="mt-3 text-center">
-														Logradouro:	{company.street}, {company.number_house}, {company.district} 
-							        			</p>
-							        			<p className="mt-3 text-center">
-														Cidade: {company.city}
-							        			</p>
-							        			<p className="mt-3 text-center">
-														Cep: {company.cep}
 							        			</p>
 							        		</div>
 							        	</div>

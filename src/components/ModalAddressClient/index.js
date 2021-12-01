@@ -9,26 +9,21 @@ const ModalAddressClient = (props) => {
 		street: '',
 		number_address: '',
 		district: '',
+		reference_point: '',
 		form_payment: '',
 		observation: '',
 		amount_paid: ''
 	});
 	const [dataFormPayment, setDataFormPayment] = useState([]);
-	//const [dataFreight, setDataFreight] = useState([]);
+	const [dataFreight, setDataFreight] = useState([]);
 	const [valueDiscount, setValueDiscount] = useState(0);
 	const [nameCoupom, setNameCoupom] = useState(null);
 	const [coupom, setCoupom] = useState(null);
 	const [idFormPayment, setIdFormPayment] = useState("-1");
+	const [priceFreight, setPriceFreight] = useState("-1");
 	const alert = useAlert();
 
 	useEffect(() => {
-		/*
-		API.get("freight/" + ID_COMPANY).then((response) => {
-			setDataFreight(response.data);
-		}).catch((error) => {
-			console.log("Erro na listagem de fretes.");
-		});
-		*/
 		API.get("form_payment/actives/" + ID_COMPANY).then((response) => {
 			let array = [];
 			response.data.forEach((formPayment) => {
@@ -41,7 +36,20 @@ const ModalAddressClient = (props) => {
 		}).catch((error) => {
 			console.log('Erro na listagem das formas de pagamento!');
 		});
-	}, []);
+
+		setDataSelectFreight();
+	});
+
+	const setDataSelectFreight = async () => {
+		try{
+			const response = await API.get("freight/" + ID_COMPANY);
+			if(response.data.length !== 0){
+				setDataFreight(response.data);
+			}
+		}catch(error){
+			console.log("Erro na listagem de fretes.");
+		}
+	}
 
 	const getCoupomChangeName = async (e) => {
 		if (nameCoupom) {
@@ -49,7 +57,7 @@ const ModalAddressClient = (props) => {
 				if (response.status === 200) {
 					if (response.data) {
 						setCoupom(response.data[0]);
-						setValueDiscount(response.data[0].value_discount)
+						setValueDiscount(response.data[0].discount_percentage)
 					}
 				}
 			}).catch((error) => {
@@ -66,6 +74,7 @@ const ModalAddressClient = (props) => {
 			street: formData.street,
 			number_address: formData.number_address,
 			district: formData.district,
+			reference_point: formData.reference_point,
 			form_payment: formData.form_payment,
 			observation: formData.observation,
 			amount_paid: formData.amount_paid
@@ -81,11 +90,13 @@ const ModalAddressClient = (props) => {
 					street: formData.street,
 					number_address: formData.number_address,
 					district: formData.district,
+					reference_point: formData.reference_point,
 					form_payment: idFormPayment,
 					coupom: coupom,
 					observation: formData.observation,
-					valueDiscount: valueDiscount,
-					amount_paid: formData.amount_paid
+					discount_percentage: valueDiscount,
+					amount_paid: formData.amount_paid,
+					freight: priceFreight
 				}
 				props.onFinishOrder(json);
 			} else {
@@ -97,12 +108,17 @@ const ModalAddressClient = (props) => {
 	}
 
 	const changeFormPayment = (e) => {
-		let formPayment = dataFormPayment.filter((form) => form.label === e.target.value);
+		let formPayment = dataFormPayment.filter((form) => form.label === e?.target?.value);
 		if (formPayment.length !== 0) {
 			setIdFormPayment(formPayment[0].value);
 		} else {
 			setIdFormPayment("-1");
 		}
+	}
+
+	const onChangeFreight = (id) => {
+		const freight = dataFreight.filter((item) => item.id === id);
+		setPriceFreight(freight.delivery_value);
 	}
 
 	return (
@@ -153,27 +169,37 @@ const ModalAddressClient = (props) => {
 									/>
 								</div>
 								<div className="col-span-3">
-									<input
+									{/*<input
 										type="text"
 										className="block border border-black-light w-full p-3 rounded mb-4"
 										name="district"
 										value={formData.district}
 										placeholder="Bairro"
 										onChange={(e) => onChangeForm(e)}
-									/>
-									{/*
+									/>*/}
+									
 									<select
 										className="block border border-black-light w-full p-2 rounded-md mb-4"
-										onChange={() => {}}
+										onChange={(e) => onChangeFreight(e.target.value)}
 									>
 										<option value="-1">Esolha um bairro</option>
 										{
-											dataFreight.map((region) => (
-												<option key={region.id} value={region.id}>{region.name_region} - {changeFormPayment(region.delivery_value)}</option>
+											dataFreight.map((region, index) => (
+												<option key={index} value={region.id}>{region.name_region} - {changeFormPayment(region.delivery_value)}</option>
 											))
 										}
 									</select>
-									*/}
+									
+								</div>
+								<div className="col-span-3">
+									<input
+										type="text"
+										className="block border border-black-light w-full p-3 rounded mb-4"
+										name="reference_point"
+										value={formData.reference_point}
+										placeholder="Ponto de referência"
+										onChange={(e) => onChangeForm(e)}
+									/>
 								</div>
 							</div>
 							<p className="w-full text-md text-black font-semibold mt-5">Dados do pagamento</p>
@@ -213,7 +239,7 @@ const ModalAddressClient = (props) => {
 												valueDiscount !== 0 && (
 													<div className="col-span-3">
 														<p className="text-green">
-															Você terá R$ {changeCommaForPoint(valueDiscount)} de desconto.
+															Você terá {changeCommaForPoint(valueDiscount)}% de desconto.
 														</p>
 													</div>
 												)

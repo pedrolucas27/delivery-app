@@ -1,6 +1,7 @@
 import React from "react";
 import "../../index.css";
-const Header = ({ title, timeWork }) => {
+const Header = ({ title, timeWork, isOpenDay }) => {
+	const isOpenDayCompany = isOpenDay ? true : false;
 	const isOpenEstablishment = (timeWork) => {
 		let flag = false;
 		if (timeWork[0]) {
@@ -20,20 +21,23 @@ const Header = ({ title, timeWork }) => {
 					{title}
 				</h1>
 				{
-					timeWork && isOpenEstablishment(timeWork) && (
-						<span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-green rounded">
-							ABERTO AGORA
-						</span>
-					)
-				}
-
-				{
-					timeWork && !isOpenEstablishment(timeWork) && (
+					isOpenDay ? (
+						timeWork && isOpenEstablishment(timeWork) ? (
+							<span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-green rounded">
+								ABERTO AGORA
+							</span>
+						) : (
+							<span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red rounded">
+								FECHADO AGORA
+							</span>
+						)
+					) : (
 						<span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red rounded">
 							FECHADO AGORA
 						</span>
 					)
 				}
+
 			</div>
 		</header>
 	);
