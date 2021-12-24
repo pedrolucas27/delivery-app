@@ -128,7 +128,6 @@ const ShoppingCart = () => {
 	}
 
 	const finishOrder = async (formAddress) => {
-		alert.info(formAddress.freight)
 		setLoadingFlag(true);
 		try {
 			setShowModalAddress(!showModalAddress);
