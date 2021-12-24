@@ -17,6 +17,7 @@ const Header = ({ title }) => {
 			let startTime = `${Number(timeWork[0].split(':')[0]) + 12}:${timeWork[0].split(':')[1]}:${timeWork[0].split(':')[2]}`;
 			let endTime = `${Number(timeWork[1].split(':')[0]) + 12}:${timeWork[1].split(':')[1]}:${timeWork[1].split(':')[2]}`;
 			let currentTime = `${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`;
+
 			if (currentTime >= startTime && currentTime <= endTime) {
 				flag = true;
 			}
