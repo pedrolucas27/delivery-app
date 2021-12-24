@@ -15,6 +15,8 @@ const ModalAddressClient = (props) => {
 		amount_paid: ''
 	});
 	const [dataFormPayment, setDataFormPayment] = useState([]);
+
+	const [district, setDistrict] = useState('');
 	const [dataFreight, setDataFreight] = useState([]);
 	const [valueDiscount, setValueDiscount] = useState(0);
 	const [nameCoupom, setNameCoupom] = useState(null);
@@ -23,30 +25,13 @@ const ModalAddressClient = (props) => {
 	const [priceFreight, setPriceFreight] = useState("-1");
 	const alert = useAlert();
 
-	useEffect(() => {
-		API.get("form_payment/actives/" + ID_COMPANY).then((response) => {
-			let array = [];
-			response.data.forEach((formPayment) => {
-				array.push({
-					label: formPayment.name_form_payment,
-					value: formPayment.id,
-				})
-			})
-			setDataFormPayment(array);
-		}).catch((error) => {
-			console.log('Erro na listagem das formas de pagamento!');
-		});
-
-		setDataSelectFreight();
-	});
-
 	const setDataSelectFreight = async () => {
-		try{
-			const response = await API.get("freight/" + ID_COMPANY);
-			if(response.data.length !== 0){
+		try {
+			const response = await API.get("/freight/" + ID_COMPANY);
+			if (response.status === 200) {
 				setDataFreight(response.data);
 			}
-		}catch(error){
+		} catch (error) {
 			console.log("Erro na listagem de fretes.");
 		}
 	}
@@ -73,7 +58,7 @@ const ModalAddressClient = (props) => {
 		var data = {
 			street: formData.street,
 			number_address: formData.number_address,
-			district: formData.district,
+			district: district,
 			reference_point: formData.reference_point,
 			form_payment: formData.form_payment,
 			observation: formData.observation,
@@ -116,10 +101,31 @@ const ModalAddressClient = (props) => {
 		}
 	}
 
-	const onChangeFreight = (id) => {
+	const onChangeFreight = (event) => {
+		const id = event.target.value;
 		const freight = dataFreight.filter((item) => item.id === id);
-		setPriceFreight(freight.delivery_value);
+		freight.length > 0 ? setPriceFreight(freight[0].delivery_value) : setPriceFreight(null);
+		freight.length > 0 ? setDistrict(freight[0].name_region) : setDistrict(null);
 	}
+
+	useEffect(() => {
+		API.get("form_payment/actives/" + ID_COMPANY).then((response) => {
+			let array = [];
+			response.data.forEach((formPayment) => {
+				array.push({
+					label: formPayment.name_form_payment,
+					value: formPayment.id,
+				})
+			})
+			setDataFormPayment(array);
+		}).catch((error) => {
+			console.log('Erro na listagem das formas de pagamento!');
+		});
+	}, []);
+
+	useEffect(() => {
+		setDataSelectFreight();
+	}, []);
 
 	return (
 		<div className={
@@ -177,19 +183,19 @@ const ModalAddressClient = (props) => {
 										placeholder="Bairro"
 										onChange={(e) => onChangeForm(e)}
 									/>*/}
-									
+
 									<select
 										className="block border border-black-light w-full p-2 rounded-md mb-4"
-										onChange={(e) => onChangeFreight(e.target.value)}
+										onChange={(e) => onChangeFreight(e)}
 									>
 										<option value="-1">Esolha um bairro</option>
 										{
-											dataFreight.map((region, index) => (
-												<option key={index} value={region.id}>{region.name_region} - {changeFormPayment(region.delivery_value)}</option>
+											dataFreight.length > 0 && dataFreight.map((region, index) => (
+												<option key={index} value={region.id}>{region.name_region}</option>
 											))
 										}
 									</select>
-									
+
 								</div>
 								<div className="col-span-3">
 									<input

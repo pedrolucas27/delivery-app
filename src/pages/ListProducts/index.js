@@ -244,7 +244,7 @@ const ListProducts = () => {
 								<div className="px-4 py-6 sm:px-0">
 									<div className="rounded-lg h-96">
 										{
-											products.length !== 0 ? (
+											products.length > 0 && (
 												<div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
 													{
 														products.map((product) => {
@@ -266,10 +266,6 @@ const ListProducts = () => {
 														})
 													}
 												</div>
-											) : (
-												<MessageIsEmpty
-													title="Nenhum produto foi encontrado com a categoria e sabor (es) escolhidos!"
-												/>
 											)
 										}
 

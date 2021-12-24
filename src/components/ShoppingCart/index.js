@@ -113,7 +113,7 @@ const ShoppingCart = (props) => {
 			let address = `Rua: ${formAddress.street};N°: ${formAddress.number_address};Bairro: ${formAddress.district}`
 			const responseFinishOrder = await API.post("createOrder", {
 				amount_paid: formAddress.amount_paid ? Number(formAddress.amount_paid.replace(",", ".")) : 0,
-				price_final: price_order - formAddress.valueDiscount,
+				price_final: price_order - formAddress.valueDiscount + formAddress.freight,
 				freight: formAddress.freight,
 				status_order: 0,
 				is_pdv: false,

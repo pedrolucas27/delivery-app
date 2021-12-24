@@ -128,6 +128,7 @@ const ShoppingCart = () => {
 	}
 
 	const finishOrder = async (formAddress) => {
+		alert.info(formAddress.freight)
 		setLoadingFlag(true);
 		try {
 			setShowModalAddress(!showModalAddress);
@@ -142,7 +143,7 @@ const ShoppingCart = () => {
 			const address = `Nome: ${data_client.split(';')[0]};Telefone: ${maskPhoneCell(data_client.split(';')[1])};Endereço: ${filds_address}`
 			const responseFinishOrder = await API.post("createOrder", {
 				amount_paid: formAddress.amount_paid ? Number(formAddress.amount_paid.replace(",", ".")) : 0,
-				price_final: price_order - ((discountPercentage/100.0) * price_order),
+				price_final: price_order - ((discountPercentage / 100.0) * price_order),
 				freight: formAddress.freight,
 				status_order: 0,
 				is_pdv: false,
@@ -267,7 +268,7 @@ const ShoppingCart = () => {
 																	discountPercentage !== 0 && (
 																		<div className="mt-10">
 																			<p className="text-md text-black font-semibold">
-																				Você terá um desconto de R${changeCommaForPoint(((discountPercentage/100.0) * priceTotal))}
+																				Você terá um desconto de R${changeCommaForPoint(((discountPercentage / 100.0) * priceTotal))}
 																			</p>
 																		</div>
 																	)
@@ -279,7 +280,7 @@ const ShoppingCart = () => {
 															<div className="border-t mt-5">
 																<div className="flex font-semibold justify-between py-6 text-sm">
 																	<span>Total da conta</span>
-																	<span>R$ {changeCommaForPoint(priceTotal - ((discountPercentage/100.0) * priceTotal))}</span>
+																	<span>R$ {changeCommaForPoint(priceTotal - ((discountPercentage / 100.0) * priceTotal))}</span>
 																</div>
 																<button
 																	className="bg-green w-full text-center py-2 rounded-md text-white"

@@ -67,7 +67,7 @@ const Navbar = (props) => {
     }).catch((error) => {
       setLogged(false);
     });
-  }, [])
+  }, [isLoggedIn])
 
   return (
     <Disclosure as="nav" className="bg-red">
