@@ -4,7 +4,6 @@ import API, { API_SOCKET } from "../../server/api.js";
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
-import pie_default from "../../images/pie.png";
 import empty_default from "../../images/empty_product.jpeg";
 import empty_cart from "../../images/empty-cart.png";
 import { changeCommaForPoint, getIdCompany } from "../../helpers.js";
@@ -23,7 +22,6 @@ const ShoppingCart = (props) => {
 	const [priceTotal, setPriceTotal] = useState(0);
 	const [showModalAddress, setShowModalAddress] = useState(false);
 	const [loadingFlag, setLoadingFlag] = useState(false);
-	//const [valueDiscount, setValueDiscount] = useState(0);
 	const alert = useAlert();
 
 	useEffect(() => {
@@ -43,7 +41,7 @@ const ShoppingCart = (props) => {
 						size: product.size,
 						price: product.price_item_order,
 						quantity: product.quantity_item,
-						image: pie_default,
+						image: product.image ? `https://api-master-pizza.herokuapp.com/${product.image}` : empty_default,
 						is_product_mister: true
 					})
 				} else {

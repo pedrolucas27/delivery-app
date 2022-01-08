@@ -2,40 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-	display: flex;
-	flex-direction: column;
+body {
+  display: flex;
+  flex-direction: column;
 }
 
-main{
-	min-height: 120vh;
+main {
+  overflow: scroll;
 }
 
-.container-main-page-not-found{
-	height: 100vh;
-	width: 100%;
-	background-color: #fff;
-	color: #000;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+.container-main-page-not-found {
+  height: 100vh;
+  width: 100%;
+  background-color: #fff;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.buttom-rem-item-cart:hover{
-	cursor: pointer;
+.buttom-rem-item-cart:hover {
+  cursor: pointer;
 }
 
-.container-loading-page{
-	height: 100vh;
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
+.container-loading-page {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
-@media only screen and (min-width: 800px) {
-	main{
-		min-height: 110vh;
-	}
-}
-
