@@ -110,10 +110,11 @@ const ShoppingCart = (props) => {
 				price_order += item.price;
 				arrayIdsProducts.push(item.id);
 			});
+			
 			let address = `Rua: ${formAddress.street};N°: ${formAddress.number_address};Bairro: ${formAddress.district}`
 			const responseFinishOrder = await API.post("createOrder", {
 				amount_paid: formAddress.amount_paid ? Number(formAddress.amount_paid.replace(",", ".")) : 0,
-				price_final: price_order - formAddress.valueDiscount + formAddress.freight,
+				price_final: price_order - ((formAddress?.discount_percentage / 100.0) * price_order),
 				freight: formAddress.freight,
 				status_order: 0,
 				is_pdv: false,
