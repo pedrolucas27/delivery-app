@@ -10,7 +10,7 @@ import CardProduct from "../../components/CardProduct";
 import ShoppingCartMobile from "../../components/ShoppingCart";
 import Loading from "../../components/Loading";
 import ModalAddCart from "../../components/ModalAddCart";
-import MessageIsEmpty from "../../components/MessageIsEmpty";
+//import MessageIsEmpty from "../../components/MessageIsEmpty";
 import "../../index.css";
 
 const ListProducts = () => {
