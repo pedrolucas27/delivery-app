@@ -30,7 +30,7 @@ export function maskPhoneCell(value) {
 }
 
 export function getIdCompany() {
-	const ID_COMPANY = "7b12e9c7-54f4-475d-a47e-1d58e75112c8"; //ID-TESTE-COMPANY-NATAN
+	const ID_COMPANY = "dd63645d-8b03-4c7b-9534-14cf60e025cc"; //ID-TESTE-COMPANY-NATAN
 	return ID_COMPANY;
 }
 
