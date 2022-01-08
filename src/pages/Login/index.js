@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAlert } from 'react-alert';
 import API from "../../server/api.js"
-import { getIdCompany } from "../../helpers.js";
+import { getIdCompany, generateLinkRecoverPassword } from "../../helpers.js";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import Loading from "../../components/Loading";
@@ -14,6 +14,18 @@ const Login = () => {
 		password: '',
 	});
 	const alert = useAlert();
+	const [company, setCompany] = useState("");
+
+	useEffect(() => {
+		setLoadingFlag(true);
+		API.get("establishment/" + getIdCompany()).then((response) => {
+			setCompany(response.status === 200 ? response.data[0] : null);
+			setLoadingFlag(false);
+		}).catch((error) => {
+			setCompany(null);
+			setLoadingFlag(false);
+		});
+	}, []);
 
 	const onAuth = async (event) => {
 		setLoadingFlag(true);
@@ -81,16 +93,23 @@ const Login = () => {
 										                    value={formData.password}
 										                    onChange={(e) => onChangeForm(e)}
 									                    />
+														<span className="w-full mt-7">
+															<a 
+																className="no-underline text-blue-500" 
+																href={generateLinkRecoverPassword(company.phone)}
+															>
+									                			Esqueci a senha. :(
+								                    		</a>
+														</span>
 									                    <button
 									                        type="submit"
-									                        className="w-full text-center py-2 rounded bg-yellow text-white sm:py-3"
+									                        className="w-full text-center py-2 rounded bg-yellow text-white sm:py-3 mt-10"
 									                    >Entrar</button>
 								                    </form>
 								                </div>
 									            <div className="text-grey-dark mt-6">
-									                Não possui conta ?
-									                <a className="no-underline border-b border-blue text-blue-500" href="/register">
-									                    Criar conta
+									                Não possui conta ? <a className="no-underline border-b border-blue text-blue-500" href="/register">
+									                Criar conta
 								                    </a>
 								                </div>
 								            </div>

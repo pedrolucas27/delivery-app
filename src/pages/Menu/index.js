@@ -6,7 +6,7 @@ import { getIdCompany } from "../../helpers.js";
 import Navbar from "../../components/Navbar";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import CardCategory from "../../components/CardCategory";
+import CardCategory from "./components/CardCategory";
 import ShoppingCartMobile from "../../components/ShoppingCart";
 import Loading from "../../components/Loading";
 import MessageIsEmpty from "../../components/MessageIsEmpty";

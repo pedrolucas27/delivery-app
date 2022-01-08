@@ -41,7 +41,7 @@ const Header = ({ title }) => {
 					{title}
 				</h1>
 				{
-					company && company.is_active == 1 ? (
+					company && company.is_active === 1 ? (
 						isOpenEstablishment([company.start_time, company.end_time]) ? (
 							<span className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-green rounded">
 								ABERTO AGORA

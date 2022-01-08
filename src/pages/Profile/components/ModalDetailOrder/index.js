@@ -1,5 +1,5 @@
 import React from "react";
-import "../../index.css";
+import "../../../../index.css";
 const ModalDetailOrder = (props) => {
 	return (
 		<div className={

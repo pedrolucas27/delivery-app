@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-//import socket from "socket.io";
 import { useAlert } from 'react-alert';
 import API, { API_SOCKET } from "../../server/api.js"
 import { getIdCompany } from "../../helpers.js";
@@ -9,9 +8,9 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import ShoppingCartMobile from "../../components/ShoppingCart";
 import Loading from "../../components/Loading";
-import CardProfile from "../../components/CardProfile";
-import LineOrder from "../../components/LineOrder";
-import ModalDetailOrder from "../../components/ModalDetailOrder";
+import CardProfile from "./components/CardProfile";
+import LineOrder from "./components/LineOrder";
+import ModalDetailOrder from "./components/ModalDetailOrder";
 import "../../index.css";
 
 import io from "socket.io-client";

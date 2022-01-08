@@ -6,10 +6,10 @@ import { getIdCompany } from "../../helpers.js";
 import Navbar from "../../components/Navbar";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import CardProduct from "../../components/CardProduct";
+import CardProduct from "./components/CardProduct";
 import ShoppingCartMobile from "../../components/ShoppingCart";
 import Loading from "../../components/Loading";
-import ModalAddCart from "../../components/ModalAddCart";
+import ModalAddCart from "./components/ModalAddCart";
 import MessageIsEmpty from "../../components/MessageIsEmpty";
 import "../../index.css";
 
@@ -244,7 +244,7 @@ const ListProducts = () => {
 								<div className="px-4 py-6 sm:px-0">
 									<div className="rounded-lg h-96">
 										{
-											products.length > 0 && (
+											products.length > 0 ? (
 												<div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
 													{
 														products.map((product) => {
@@ -266,6 +266,10 @@ const ListProducts = () => {
 														})
 													}
 												</div>
+											):(
+												<MessageIsEmpty 
+													title="Não existe produto cadastrado com essas opções."
+												/>
 											)
 										}
 

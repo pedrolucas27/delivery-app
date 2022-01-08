@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { maskPhoneCell, getIdCompany } from "../../helpers.js";
-import "../../index.css";
+import { maskPhoneCell, getIdCompany } from "../../../../helpers.js";
+import "../../../../index.css";
 const CardProfile = ({ user, ...props }) => {
 	const ID_COMPANY = getIdCompany();
 	const [formData, setFormData] = useState(null);

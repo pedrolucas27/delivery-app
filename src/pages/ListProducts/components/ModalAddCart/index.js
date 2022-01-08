@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { changeCommaForPoint } from "../../helpers.js";
-import "../../index.css";
+import { changeCommaForPoint } from "../../../../helpers.js";
+import "../../../../index.css";
 const ModalAddCart = (props) => {
 	const [quantity, setQuantity] = useState(1);
 	const [additional, setAdditional] = useState(null);

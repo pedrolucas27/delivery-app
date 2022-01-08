@@ -1,6 +1,6 @@
 import React from "react";
-import emptyProduct from '../../images/empty_product.jpeg';
-import "../../index.css";
+import emptyProduct from '../../../../images/empty_product.jpeg';
+import "../../../../index.css";
 const CardCategory = (props) => {
 	return(
 		<div key={props.key} className="grid shadow-md rounded-lg cursor-pointer" onClick={props.onChangeCategory}>

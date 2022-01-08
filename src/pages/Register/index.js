@@ -130,9 +130,8 @@ const Register = () => {
 								                    </form>
 								                </div>
 								                <div className="text-black mt-6">
-								                    Você já possui conta ?
-								                    <a className="no-underline border-b border-blue text-blue-500" href="/login">
-								                        Entrar
+								                    Você já possui conta ? <a className="no-underline border-b border-blue text-blue-500" href="/login">
+								                    Entrar
 								                    </a>
 								                </div>
 								            </div>

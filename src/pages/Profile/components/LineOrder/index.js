@@ -1,7 +1,7 @@
 import React from "react";
 import moment from "moment";
-import { changeCommaForPoint } from "../../helpers.js";
-import "../../index.css";
+import { changeCommaForPoint } from "../../../../helpers.js";
+import "../../../../index.css";
 const LineOrder = (props) => {
 	return (
 		<tr key={props.order.id_order}>

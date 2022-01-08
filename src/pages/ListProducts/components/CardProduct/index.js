@@ -1,7 +1,7 @@
 import React from "react";
-import { changeCommaForPoint } from "../../helpers.js";
-import pie_default from "../../images/pie.png";
-import "../../index.css";
+import { changeCommaForPoint } from "../../../../helpers.js";
+import pie_default from "../../../../images/pie.png";
+import "../../../../index.css";
 const CardProduct = ({ showModal, imageProduct, nameProduct, description, price }) => {
 	return(
     	<div className="flex p-2 shadow cursor-pointer rounded-lg shadow-md" onClick={showModal}>

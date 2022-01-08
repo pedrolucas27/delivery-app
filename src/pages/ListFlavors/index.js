@@ -7,7 +7,7 @@ import { getIdCompany } from "../../helpers.js";
 import Navbar from "../../components/Navbar";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import CardFlavor from "../../components/CardFlavor";
+import CardFlavor from "./components/CardFlavor";
 import ShoppingCartMobile from "../../components/ShoppingCart";
 import Loading from "../../components/Loading";
 import MessageIsEmpty from "../../components/MessageIsEmpty";

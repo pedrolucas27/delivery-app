@@ -34,3 +34,7 @@ export function getIdCompany() {
 	return ID_COMPANY;
 }
 
+export function generateLinkRecoverPassword(phone){
+	const link = `https://api.whatsapp.com/send?phone=55${phone}&text=Ol%C3%A1%2C%20atendimento%20do%20Master%20Pizza.%20Gostaria%20de%20alterar%20minha%20senha%20de%20usua%C5%95io%20para%20acessar%20o%20aplicativo.`;
+	return link;
+}
