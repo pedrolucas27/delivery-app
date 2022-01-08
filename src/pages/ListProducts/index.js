@@ -56,7 +56,7 @@ const ListProducts = () => {
 					id: product.id_product,
 					name: product.name_product,
 					description: product.description,
-					image: product.image ? `https://api-master-pizza.herokuapp.com/${product.image}` : null,
+					image: product.image ? `https://api-master-pizza.herokuapp.com/${product.image}` : 'null',
 					price: product.price,
 					size: product.size_product + " (" + product.unit + " - " + product.abreviation + ")",
 					is_product_mister: false
@@ -251,8 +251,8 @@ const ListProducts = () => {
 															return (
 																<CardProduct
 																	key={product.id}
-																	name={product.name}
-																	image={product.image}
+																	nameProduct={product.name}
+																	imageProduct={product.image}
 																	price={product.price}
 																	description={product.description}
 																	showModal={

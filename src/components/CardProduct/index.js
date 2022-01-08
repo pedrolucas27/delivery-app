@@ -1,12 +1,13 @@
 import React from "react";
 import { changeCommaForPoint } from "../../helpers.js";
-import pie_default from "../../images/pie.png";
+import empty_default from "../../images/empty_product.jpeg";
 import "../../index.css";
 const CardProduct = ({ showModal, imageProduct, nameProduct, description, price }) => {
+
 	return(
     	<div className="flex p-2 shadow cursor-pointer rounded-lg shadow-md" onClick={showModal}>
 		  	<div className="flex-none">
-		    	<img src={imageProduct || pie_default} alt="img-product" className="w-24 h-24 rounded-lg" />
+		    	<img src={imageProduct || empty_default} alt="img-product" className="w-24 h-24 rounded-lg" />
 		  	</div>
 		  	<div className="pl-4">
 			    <div className="flex flex-wrap items-baseline">
