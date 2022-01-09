@@ -240,9 +240,9 @@ const ListProducts = () => {
 						<Navbar current={"menu"} clickCartMobile={() => setOpenCart(!openCart)} />
 						<Header title={'Cardápio'} listProducts={true} />
 						<main>
-							<div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+							<div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 h-screen">
 								<div className="px-4 py-6 sm:px-0">
-									<div className="rounded-lg h-96">
+									<div className="rounded-lg">
 										{
 											products.length > 0 ? (
 												<div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">

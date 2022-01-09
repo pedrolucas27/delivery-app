@@ -70,9 +70,9 @@ const Login = () => {
 					<div>
 						<Navbar />
 						<main>
-						    <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+						    <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 h-screen">
 							    <div className="px-4 py-6 sm:px-0">
-							       	<div className="rounded-lg h-96">
+							       	<div className="rounded-lg">
 								            <div className="container max-w-sm mx-auto flex-1 flex flex-col items-center justify-center px-2">
 								                <div className="bg-white px-6 py-4 shadow-lg rounded shadow-md text-black w-full h-full">
 								                    <h1 className="mb-8 text-3xl text-center">Login</h1>
@@ -93,12 +93,12 @@ const Login = () => {
 										                    value={formData.password}
 										                    onChange={(e) => onChangeForm(e)}
 									                    />
-														<span className="w-full mt-7">
+														<span className="w-full mt-7 flex justify-center items-center">
 															<a 
 																className="no-underline text-blue-500" 
 																href={generateLinkRecoverPassword(company.phone)}
 															>
-									                			Esqueci a senha. :(
+									                			Esqueci a senha. &#128533;
 								                    		</a>
 														</span>
 									                    <button

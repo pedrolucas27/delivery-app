@@ -41,7 +41,7 @@ const ListCompany = () => {
 						<main>
 							<div className="max-w-7xl mx-auto py-0 sm:px-6 lg:px-8">
 								<div className="px-4 py-4 sm:px-0 py-6">
-									<div className="rounded-lg h-96">
+									<div className="flex justify-center items-center rounded-lg h-screen">
 										<div>
 											<div>
 												<div className="flex justify-center">

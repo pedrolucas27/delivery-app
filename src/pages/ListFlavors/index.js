@@ -114,9 +114,9 @@ const ListFlavors = () => {
 						<Navbar current={"menu"} clickCartMobile={() => setOpenCart(!openCart)} />
 						<Header title={'Cardápio'} listFlavors={true} />
 						<main>
-							<div className="max-w-7xl mx-auto py-0 sm:px-6 lg:px-8">
+							<div className="max-w-7xl mx-auto py-0 sm:px-6 lg:px-8 h-screen">
 								<div className="px-4 py-4 sm:px-0 py-6">
-									<div className="rounded-lg h-96">
+									<div className="rounded-lg">
 										{
 											dataFlavor.length !== 0 ? (
 												<div>
