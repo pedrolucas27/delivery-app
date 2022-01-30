@@ -119,7 +119,7 @@ const ListProducts = () => {
 						id_2: productsFlavorTwo[j].id_product,
 						name: "Pizza: 1/2 " + productsFlavorOne[i].name_flavor + " + 1/2 " + productsFlavorTwo[j].name_flavor,
 						description: "Produto misto.",
-						price: productsFlavorOne[i].price + productsFlavorTwo[j].price,
+						price: Math.max(productsFlavorOne[i].price, productsFlavorTwo[j].price),
 						size: productsFlavorOne[i].size_product + " (" + productsFlavorOne[i].unit + " - " + productsFlavorOne[i].abreviation + ")",
 						is_product_mister: true
 					});
@@ -266,8 +266,8 @@ const ListProducts = () => {
 														})
 													}
 												</div>
-											):(
-												<MessageIsEmpty 
+											) : (
+												<MessageIsEmpty
 													title="Não existe produto cadastrado com essas opções."
 												/>
 											)
