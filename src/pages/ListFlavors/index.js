@@ -15,14 +15,18 @@ import "../../index.css";
 
 const ListFlavors = () => {
 	localStorage.removeItem("@masterpizza-delivery-app/key-flavor");
+
 	const ID_COMPANY = getIdCompany();
+	const alert = useAlert();
+	const categoryByFlavor = localStorage.getItem("@masterpizza-delivery-app/key-category");
 	const { idCategory } = useParams();
+
 	const [dataFlavor, setDataFlavor] = useState([]);
 	const [openCart, setOpenCart] = useState(false);
 	const [loadingFlag, setLoadingFlag] = useState(false);
 	const [logged, setLogged] = useState(false);
-	const alert = useAlert();
-	const categoryByFlavor = localStorage.getItem("@masterpizza-delivery-app/key-category");
+	const [visibleButton, setVisibleButton] = useState(false);
+
 
 	useEffect(() => {
 		setLoadingFlag(true);
@@ -49,6 +53,11 @@ const ListFlavors = () => {
 		});
 	}, []);
 
+	useEffect(() => {
+		let flavors = dataFlavor.filter((i) => i.check === true);
+		setVisibleButton(flavors.length !== 0 ? true : false);
+	}, [dataFlavor]);
+
 	const checkFlavor = (id) => {
 		let obj = dataFlavor.filter((i) => i.id === id)[0];
 		let newObj = {
@@ -57,6 +66,7 @@ const ListFlavors = () => {
 			description: obj.description,
 			check: !obj.check
 		}
+
 		if ((categoryByFlavor === "PIZZA") || (categoryByFlavor === "PIZZAS")) {
 			let is_check = !obj.check;
 			if (is_check && (dataFlavor.filter((i) => i.check === true).length === 2)) {
@@ -88,6 +98,7 @@ const ListFlavors = () => {
 			})
 			setDataFlavor(array);
 		}
+
 	}
 
 	const redirect = (flag) => {
@@ -122,8 +133,8 @@ const ListFlavors = () => {
 												<div>
 													<h2 className="pb-4 text-lg w-full font-bold text-black sm:text-2xl">
 														{
-															(categoryByFlavor === "PIZZA") || (categoryByFlavor === "PIZZAS") ? 
-															"Escolha até 2 sabores":"Escolha 1 sabor"
+															(categoryByFlavor === "PIZZA") || (categoryByFlavor === "PIZZAS") ?
+																"Escolha até 2 sabores" : "Escolha 1 sabor"
 														}
 													</h2>
 													<div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
@@ -148,11 +159,20 @@ const ListFlavors = () => {
 												/>
 											)
 										}
-										<div className="mt-4">
-											<button onClick={dataFlavor.length !== 0 ? () => redirect(true) : () => redirect(false)} className='bg-green w-full text-white p-2 rounded-lg text-lg font-medium sm:p-3 w-14'>
-												{dataFlavor.length !== 0 ? "Seguir" : "Voltar"}
-											</button>
-										</div>
+
+										{
+											visibleButton && (
+												<button
+													onClick={dataFlavor.length !== 0 ? () => redirect(true) : () => redirect(false)}
+													className='rounded-full btn-arrow bg-green'
+												>
+													<svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+														<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+													</svg>
+												</button>
+											)
+										}
+
 									</div>
 								</div>
 							</div>
