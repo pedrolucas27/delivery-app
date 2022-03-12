@@ -20,8 +20,6 @@ const Menu = () => {
 	const [logged, setLogged] = useState(false);
 	const alert = useAlert();
 
-	console.log(API)
-
 	useEffect(() => {
 		setLoadingFlag(true);
 		isLoggedIn().then((response) => {
@@ -32,11 +30,16 @@ const Menu = () => {
 		API.get("category/actives/" + ID_COMPANY).then((response) => {
 			let array = [];
 			response.data.forEach((category) => {
-				array.push({
-					id: category.id_category,
-					name: category.name_category,
-					image: category.image ? `https://api-master-pizza.herokuapp.com/${category.image}` : null
-				})
+				const nc = String(category.name_category).toLowerCase();
+
+				if (nc !== 'borda' && nc !== 'bordas'){
+					array.push({
+						id: category.id_category,
+						name: category.name_category,
+						image: category.image ? `https://api-master-pizza.herokuapp.com/${category.image}` : null
+					})
+				}
+				
 			})
 			setDataCategory(array);
 			setLoadingFlag(false);

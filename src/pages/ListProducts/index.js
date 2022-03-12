@@ -16,6 +16,7 @@ import "../../index.css";
 const ListProducts = () => {
 	const ID_COMPANY = getIdCompany();
 	const idCategory = localStorage.getItem("@masterpizza-delivery-app/id-category");
+	const categoryByFlavor = localStorage.getItem("@masterpizza-delivery-app/key-category");
 
 	const [openCart, setOpenCart] = useState(false);
 	const [loadingFlag, setLoadingFlag] = useState(false);
@@ -59,7 +60,8 @@ const ListProducts = () => {
 					image: product.image ? `https://api-master-pizza.herokuapp.com/${product.image}` : 'null',
 					price: product.price,
 					size: product.size_product + " (" + product.unit + " - " + product.abreviation + ")",
-					is_product_mister: false
+					is_product_mister: false,
+					unit_fk: product.fk_id_unit
 				})
 			})
 			setProducts(array);
@@ -91,7 +93,8 @@ const ListProducts = () => {
 					array.push({
 						id: additional.id,
 						name: additional.name,
-						price: additional.price
+						price: additional.price,
+						isBorder: false
 					})
 				})
 				setAdditionals(array);
@@ -100,6 +103,29 @@ const ListProducts = () => {
 			});
 		} catch (error) {
 			console.log("Erro na listagem de adicionais pertencete ao produto.");
+		}
+	}
+
+	const getBorders = async (idUnit) => {
+		try{
+			const result = await API.get('product/unit-mensuration/'+idUnit);
+			let array = [];
+			result.data.forEach((border) => {
+				const nc = String(border.name_category).toLowerCase();
+
+				if (nc === 'borda' || nc === 'bordas'){
+					array.push({
+						id: border.id_product,
+						name: border.name_product,
+						price: border.price,
+						isBorder: true
+					})
+				}
+				
+			})
+			setAdditionals(array);
+		}catch(error){
+			console.log("Erro na listagem de bordas pertencete ao produto.");
 		}
 	}
 
@@ -121,7 +147,8 @@ const ListProducts = () => {
 						description: "Produto misto.",
 						price: Math.max(productsFlavorOne[i].price, productsFlavorTwo[j].price),
 						size: productsFlavorOne[i].size_product + " (" + productsFlavorOne[i].unit + " - " + productsFlavorOne[i].abreviation + ")",
-						is_product_mister: true
+						is_product_mister: true,
+						unit_fk: productsFlavorOne.fk_id_unit
 					});
 				}
 			}
@@ -129,8 +156,16 @@ const ListProducts = () => {
 		setProducts(productsMisto);
 	}
 
+	const setFieldsAdditional = (unit) => {
+		if ((categoryByFlavor === "PIZZA") || (categoryByFlavor === "PIZZAS")){
+			getBorders(unit);
+		}else{
+			getAdditionalsByCategory();
+		}
+	}
+
 	const changeProduct = (idProduct, idProduct2) => {
-		getAdditionalsByCategory();
+		
 		setLoadingFlag(true);
 		let product = {};
 		if (idProduct2) {
@@ -138,7 +173,9 @@ const ListProducts = () => {
 		} else {
 			product = products.filter((item) => item.id === idProduct)[0];
 		}
+		setFieldsAdditional(product.unit_fk)
 		setProductCart(product);
+
 		setTimeout(() => {
 			setLoadingFlag(false);
 			setShowModal(true);
@@ -146,7 +183,7 @@ const ListProducts = () => {
 	}
 
 	const addCartProduct = async (quantity, additional) => {
-		if (additional) {
+		if (!additional.isBorder) {
 			let additional_cart = {
 				id_product_fk: null,
 				id_product_fk2: null,
@@ -156,6 +193,16 @@ const ListProducts = () => {
 				id_additional_fk: additional.id
 			}
 			await insertAdditionalInCart(additional_cart);
+		}else{
+			let product_border = {
+				id_product_fk: additional.id,
+				id_product_fk2: null,
+				quantity_item: 1,
+				price_item_order: additional.price,
+				observation: null,
+				id_additional_fk: null
+			}
+			await insertProductInCart(product_border);
 		}
 
 		let product_cart = {
