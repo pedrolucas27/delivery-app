@@ -29,8 +29,9 @@ export function maskPhoneCell(value) {
 	return v;
 }
 
+// FUNÇÃO PURAMENTE PARA TESTES !!!
 export function getIdCompany() {
-	const ID_COMPANY = "dd63645d-8b03-4c7b-9534-14cf60e025cc"; //ID-TESTE-COMPANY-NATAN
+	const ID_COMPANY = "dd63645d-8b03-4c7b-9534-14cf60e025cc";
 	return ID_COMPANY;
 }
 
